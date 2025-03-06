@@ -47,20 +47,4 @@ struct AboutView: View {
         .frame(width: 350, height: 450)
         .padding()
     }
-}
-
-struct FeatureRow: View {
-    let icon: String
-    let text: String
-    
-    var body: some View {
-        HStack(spacing: 10) {
-            Image(systemName: icon)
-                .foregroundColor(.blue)
-                .frame(width: 20)
-            
-            Text(text)
-                .foregroundColor(.primary)
-        }
-    }
 } 

@@ -8,10 +8,12 @@
 import SwiftUI
 import AppKit
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
     var statusItem: NSStatusItem?
     var popover: NSPopover?
     var settingsWindow: NSWindow?
+    var settingsViewController: NSHostingController<AnyView>?
+    var settingsState = SettingsState()
         
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 隐藏Dock栏图标
@@ -73,25 +75,162 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func openSettings() {
         if settingsWindow == nil {
-            let contentView = SettingsView()
-            let hostingController = NSHostingController(rootView: contentView)
+            // 重置选项卡状态
+            settingsState.selectedTab = 0
+            
+            // 创建设置视图并应用环境对象
+            let contentView = AnyView(SettingsView().environmentObject(settingsState))
+            
+            // 创建视图控制器
+            settingsViewController = NSHostingController(rootView: contentView)
             
             settingsWindow = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 500, height: 500),
-                styleMask: [.titled, .closable, .miniaturizable],
+                styleMask: [.titled, .closable, .miniaturizable],  // 系统标题栏
                 backing: .buffered,
                 defer: false
             )
             
             settingsWindow?.center()
             settingsWindow?.setFrameAutosaveName("Settings")
-            settingsWindow?.contentViewController = hostingController
-            settingsWindow?.title = "设置"
+            settingsWindow?.contentViewController = settingsViewController
+            settingsWindow?.title = "设置"  // 设置窗口标题
             settingsWindow?.isReleasedWhenClosed = false
+            
+            // 创建工具栏
+            let toolbar = NSToolbar(identifier: "SettingsToolbar")
+            toolbar.allowsUserCustomization = false
+            toolbar.displayMode = .iconAndLabel  // 同时显示图标和标签
+            toolbar.delegate = self
+            
+            // 设置工具栏
+            settingsWindow?.toolbar = toolbar
+            
+            // 默认选中第一个标签页
+            DispatchQueue.main.async {
+                self.selectGeneralTab(self)
+            }
         }
         
         settingsWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+    }
+    
+    // 标签页切换方法
+    @objc func selectGeneralTab(_ sender: Any) {
+        // 更新状态
+        settingsState.selectedTab = 0
+        
+        // 更新工具栏项的选中状态
+        if let toolbar = settingsWindow?.toolbar {
+            for item in toolbar.items {
+                if item.itemIdentifier.rawValue == "General" {
+                    item.image = NSImage(systemSymbolName: "gear.fill", accessibilityDescription: "通用")
+                } else if item.itemIdentifier.rawValue == "Sync" {
+                    item.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath.circle", accessibilityDescription: "同步")
+                } else if item.itemIdentifier.rawValue == "About" {
+                    item.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: "关于")
+                }
+            }
+        }
+    }
+    
+    @objc func selectSyncTab(_ sender: Any) {
+        // 更新状态
+        settingsState.selectedTab = 1
+        
+        // 更新工具栏项的选中状态
+        if let toolbar = settingsWindow?.toolbar {
+            for item in toolbar.items {
+                if item.itemIdentifier.rawValue == "Sync" {
+                    item.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath.circle.fill", accessibilityDescription: "同步")
+                } else if item.itemIdentifier.rawValue == "General" {
+                    item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: "通用")
+                } else if item.itemIdentifier.rawValue == "About" {
+                    item.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: "关于")
+                }
+            }
+        }
+    }
+    
+    @objc func selectAboutTab(_ sender: Any) {
+        // 更新状态
+        settingsState.selectedTab = 2
+        
+        // 更新工具栏项的选中状态
+        if let toolbar = settingsWindow?.toolbar {
+            for item in toolbar.items {
+                if item.itemIdentifier.rawValue == "About" {
+                    item.image = NSImage(systemSymbolName: "info.circle.fill", accessibilityDescription: "关于")
+                } else if item.itemIdentifier.rawValue == "General" {
+                    item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: "通用")
+                } else if item.itemIdentifier.rawValue == "Sync" {
+                    item.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath.circle", accessibilityDescription: "同步")
+                }
+            }
+        }
+    }
+    
+    // NSToolbarDelegate 方法
+    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+        if itemIdentifier == NSToolbarItem.Identifier("General") {
+            // 使用NSToolbarItemGroup来创建带有图标和标签的工具栏项
+            let item = NSToolbarItem(itemIdentifier: itemIdentifier)
+            item.label = "通用"
+            item.paletteLabel = "通用"
+            item.toolTip = "通用设置"
+            item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: "通用")
+            item.action = #selector(selectGeneralTab(_:))
+            item.target = self
+            
+            // 确保图标和标签同时显示
+            item.isBordered = true
+            
+            return item
+        } else if itemIdentifier == NSToolbarItem.Identifier("Sync") {
+            let item = NSToolbarItem(itemIdentifier: itemIdentifier)
+            item.label = "同步"
+            item.paletteLabel = "同步"
+            item.toolTip = "同步设置"
+            item.image = NSImage(systemSymbolName: "arrow.triangle.2.circlepath.circle", accessibilityDescription: "同步")
+            item.action = #selector(selectSyncTab(_:))
+            item.target = self
+            
+            // 确保图标和标签同时显示
+            item.isBordered = true
+            
+            return item
+        } else if itemIdentifier == NSToolbarItem.Identifier("About") {
+            let item = NSToolbarItem(itemIdentifier: itemIdentifier)
+            item.label = "关于"
+            item.paletteLabel = "关于"
+            item.toolTip = "关于应用"
+            item.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: "关于")
+            item.action = #selector(selectAboutTab(_:))
+            item.target = self
+            
+            // 确保图标和标签同时显示
+            item.isBordered = true
+            
+            return item
+        } else if itemIdentifier == NSToolbarItem.Identifier.flexibleSpace {
+            return NSToolbarItem(itemIdentifier: NSToolbarItem.Identifier.flexibleSpace)
+        }
+        
+        return nil
+    }
+    
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return [
+            .flexibleSpace,
+            NSToolbarItem.Identifier("General"),
+            NSToolbarItem.Identifier("Sync"),
+            NSToolbarItem.Identifier("About")
+        ]
+    }
+    
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return toolbarDefaultItemIdentifiers(toolbar)
     }
 }
 

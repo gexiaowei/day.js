@@ -1,8 +1,13 @@
 import SwiftUI
 
+// 创建一个可观察对象来管理设置视图的状态
+class SettingsState: ObservableObject {
+    @Published var selectedTab: Int = 0
+}
+
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTab = 0
+    @EnvironmentObject var settingsState: SettingsState
     
     // 通用设置
     @AppStorage("launchAtLogin") private var launchAtLogin = false
@@ -13,69 +18,115 @@ struct SettingsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // 标题栏
-            HStack {
-                Text("设置")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-            .padding()
-            .background(Color.secondary.opacity(0.1))
-            
-            // 选项卡栏
-            HStack(spacing: 0) {
-                TabButton(title: "通用", systemImage: "gear", isSelected: selectedTab == 0) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        selectedTab = 0
-                    }
-                }
-                
-                TabButton(title: "同步", systemImage: "arrow.triangle.2.circlepath.circle", isSelected: selectedTab == 1) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        selectedTab = 1
-                    }
-                }
-                
-                TabButton(title: "关于", systemImage: "info.circle", isSelected: selectedTab == 2) {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        selectedTab = 2
-                    }
-                }
-            }
-            .padding(.top, 8)
-            
             // 内容区域 - 预加载所有视图并使用透明度动画
             ZStack {
                 // 通用设置
                 GeneralSettingsView(launchAtLogin: $launchAtLogin, enableNotifications: $enableNotifications)
-                    .opacity(selectedTab == 0 ? 1 : 0)
-                    .zIndex(selectedTab == 0 ? 1 : 0)
+                    .opacity(settingsState.selectedTab == 0 ? 1 : 0)
+                    .zIndex(settingsState.selectedTab == 0 ? 1 : 0)
                 
                 // 同步设置
                 SyncSettingsView(enableICloudSync: $enableICloudSync)
-                    .opacity(selectedTab == 1 ? 1 : 0)
-                    .zIndex(selectedTab == 1 ? 1 : 0)
+                    .opacity(settingsState.selectedTab == 1 ? 1 : 0)
+                    .zIndex(settingsState.selectedTab == 1 ? 1 : 0)
                 
                 // 关于页面
                 AboutSettingsView()
-                    .opacity(selectedTab == 2 ? 1 : 0)
-                    .zIndex(selectedTab == 2 ? 1 : 0)
+                    .opacity(settingsState.selectedTab == 2 ? 1 : 0)
+                    .zIndex(settingsState.selectedTab == 2 ? 1 : 0)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(width: 500, height: 500)
     }
+}
+
+// 为View添加圆角扩展
+extension View {
+    func cornerRadius(_ radius: CGFloat, corners: RectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+// 自定义圆角形状
+struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: RectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        
+        let topLeft = corners.contains(.topLeft)
+        let topRight = corners.contains(.topRight)
+        let bottomLeft = corners.contains(.bottomLeft)
+        let bottomRight = corners.contains(.bottomRight)
+        
+        let width = rect.width
+        let height = rect.height
+        
+        // 顶部左侧
+        if topLeft {
+            path.move(to: CGPoint(x: 0, y: radius))
+            path.addArc(center: CGPoint(x: radius, y: radius),
+                        radius: radius,
+                        startAngle: .degrees(180),
+                        endAngle: .degrees(270),
+                        clockwise: false)
+        } else {
+            path.move(to: CGPoint(x: 0, y: 0))
+        }
+        
+        // 顶部右侧
+        if topRight {
+            path.addLine(to: CGPoint(x: width - radius, y: 0))
+            path.addArc(center: CGPoint(x: width - radius, y: radius),
+                        radius: radius,
+                        startAngle: .degrees(270),
+                        endAngle: .degrees(0),
+                        clockwise: false)
+        } else {
+            path.addLine(to: CGPoint(x: width, y: 0))
+        }
+        
+        // 底部右侧
+        if bottomRight {
+            path.addLine(to: CGPoint(x: width, y: height - radius))
+            path.addArc(center: CGPoint(x: width - radius, y: height - radius),
+                        radius: radius,
+                        startAngle: .degrees(0),
+                        endAngle: .degrees(90),
+                        clockwise: false)
+        } else {
+            path.addLine(to: CGPoint(x: width, y: height))
+        }
+        
+        // 底部左侧
+        if bottomLeft {
+            path.addLine(to: CGPoint(x: radius, y: height))
+            path.addArc(center: CGPoint(x: radius, y: height - radius),
+                        radius: radius,
+                        startAngle: .degrees(90),
+                        endAngle: .degrees(180),
+                        clockwise: false)
+        } else {
+            path.addLine(to: CGPoint(x: 0, y: height))
+        }
+        
+        path.closeSubpath()
+        return path
+    }
+}
+
+// 定义矩形角落
+struct RectCorner: OptionSet {
+    let rawValue: Int
+    
+    static let topLeft = RectCorner(rawValue: 1 << 0)
+    static let topRight = RectCorner(rawValue: 1 << 1)
+    static let bottomLeft = RectCorner(rawValue: 1 << 2)
+    static let bottomRight = RectCorner(rawValue: 1 << 3)
+    
+    static let allCorners: RectCorner = [.topLeft, .topRight, .bottomLeft, .bottomRight]
 }
 
 // 通用设置视图
@@ -235,29 +286,20 @@ struct AboutSettingsView: View {
     }
 }
 
-// 选项卡按钮
-struct TabButton: View {
-    let title: String
-    let systemImage: String
-    let isSelected: Bool
-    let action: () -> Void
+// 功能行
+struct FeatureRow: View {
+    let icon: String
+    let text: String
     
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 16))
-                Text(title)
-                    .font(.system(size: 12))
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 8)
-            .background(isSelected ? Color.blue.opacity(0.1) : Color.clear)
-            .foregroundColor(isSelected ? .blue : .primary)
-            .cornerRadius(8)
-            .contentShape(Rectangle())
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .foregroundColor(.blue)
+                .frame(width: 20)
+            
+            Text(text)
+                .foregroundColor(.primary)
         }
-        .buttonStyle(PlainButtonStyle())
     }
 }
 
