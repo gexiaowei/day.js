@@ -104,14 +104,12 @@ struct ContentView: View {
     
     // 事件列表视图
     private var eventListView: some View {
-        VStack {
+        VStack(spacing: 0) {
             // 顶部标题和添加按钮
             HStack {
-                Spacer()
-                
                 Text("倒计时")
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold))
+                    .foregroundColor(.primary)
                 
                 Spacer()
                 
@@ -119,26 +117,31 @@ struct ContentView: View {
                     popoverType = .add
                     showingPopover = true
                 } label: {
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
-                        .padding(8)
-                        .foregroundColor(.primary)
+                    Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 22))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundColor(.accentColor)
                 }
                 .id("addButton")
+                .buttonStyle(.plain)
             }
             .padding(.horizontal)
+            .padding(.top, 16)
+            .padding(.bottom, 16)
             
             // 主内容区域
             if countdownStore.events.isEmpty {
                 Spacer()
                 VStack(spacing: 20) {
                     Image(systemName: "calendar.badge.clock")
-                        .font(.system(size: 60))
+                        .font(.system(size: 70))
+                        .symbolRenderingMode(.hierarchical)
                         .foregroundColor(.secondary)
                     
                     Text("没有倒计时事件")
                         .font(.title2)
                         .fontWeight(.medium)
+                        .foregroundColor(.primary)
                     
                     Text("点击右上角的+按钮添加新的倒计时事件")
                         .font(.subheadline)
@@ -154,13 +157,13 @@ struct ContentView: View {
                             CountdownCardView(event: event)
                                 .background(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color.white.opacity(0.05))
-                                        .shadow(color: Color(event.color).opacity(0.2), radius: 8, x: 0, y: 4)
+                                        .fill(Color(NSColor.windowBackgroundColor))
                                 )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color(event.color).opacity(0.3), lineWidth: 1)
+                                        .stroke(Color(event.color).opacity(0.2), lineWidth: 1)
                                 )
+                                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                                 .contentShape(RoundedRectangle(cornerRadius: 16))
                                 .onTapGesture {
                                     selectedEvent = event
@@ -182,13 +185,14 @@ struct ContentView: View {
                     .padding(.horizontal)
                     .padding(.vertical, 8)
                 }
+                .background(Color(NSColor.windowBackgroundColor))
             }
         }
     }
     
     // 事件详情视图
     private func eventDetailView(event: CountdownEvent) -> some View {
-        VStack {
+        VStack(spacing: 0) {
             // 顶部标题和返回按钮
             HStack {
                 Button {
@@ -197,16 +201,17 @@ struct ContentView: View {
                     }
                 } label: {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .bold))
-                        .padding(8)
-                        .foregroundColor(.primary)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.accentColor)
                 }
+                .buttonStyle(.plain)
                 
                 Spacer()
                 
                 Text(event.title)
                     .font(.headline)
                     .lineLimit(1)
+                    .foregroundColor(.primary)
                 
                 Spacer()
                 
@@ -214,120 +219,175 @@ struct ContentView: View {
                     popoverType = .edit
                     showingPopover = true
                 } label: {
-                    Image(systemName: "pencil")
-                        .font(.system(size: 16, weight: .bold))
-                        .padding(8)
-                        .foregroundColor(.primary)
+                    Image(systemName: "pencil.circle.fill")
+                        .font(.system(size: 22))
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundColor(.accentColor)
                 }
+                .buttonStyle(.plain)
             }
             .padding(.horizontal)
-            .padding(.bottom, 10)
+            .padding(.top, 16)
+            .padding(.bottom, 16)
             
             ScrollView {
-                VStack(alignment: .leading, spacing: 20) {
-                    // 标题
-                    Text(event.title)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .padding(.horizontal)
-                    
+                VStack(alignment: .leading, spacing: 24) {
                     // 倒计时显示
                     HStack {
                         Spacer()
-                        VStack(spacing: 5) {
+                        VStack(spacing: 8) {
                             Text("\(abs(event.daysRemaining))")
                                 .font(.system(size: 80, weight: .bold))
                                 .foregroundColor(Color(event.color))
                             
                             Text(event.isPast ? "天前" : "天后")
-                                .font(.title2)
+                                .font(.title3)
                                 .foregroundColor(.secondary)
                         }
                         Spacer()
                     }
-                    .padding(.vertical, 30)
+                    .padding(.vertical, 24)
                     
                     // 如果有图片，显示图片
                     if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
                         Image(nsImage: nsImage)
                             .resizable()
                             .scaledToFill()
-                            .frame(width: 200, height: 200)
-                            .clipShape(Rectangle())
-                            .cornerRadius(12)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 200)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
                             .padding(.horizontal)
                     }
                     
                     // 事件信息
-                    VStack(alignment: .leading, spacing: 15) {
-                        HStack {
-                            Text("日历类型:")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                            Text(event.calendarType.rawValue)
-                                .font(.headline)
-                        }
-                        
-                        HStack {
-                            Text("日期:")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                            if event.calendarType == .lunar {
-                                Text(formattedLunarDate(event.targetDate))
-                                    .font(.headline)
-                            } else {
-                                Text(formattedDate(event.targetDate))
-                                    .font(.headline)
-                            }
-                        }
-                        
-                        // 如果是农历，显示对应的公历日期
-                        if event.calendarType == .lunar {
-                            HStack {
-                                Text("公历日期:")
-                                    .font(.headline)
+                    VStack(alignment: .leading, spacing: 20) {
+                        Group {
+                            HStack(alignment: .top) {
+                                Image(systemName: "calendar")
+                                    .frame(width: 24)
                                     .foregroundColor(.secondary)
-                                Text(formattedDate(event.targetDate))
-                                    .font(.headline)
-                            }
-                        }
-                        
-                        HStack {
-                            Text("重复周期:")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                            Text(event.repeatCycle.rawValue)
-                                .font(.headline)
-                        }
-                        
-                        if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
-                            HStack {
-                                Text("下次日期:")
-                                    .font(.headline)
-                                    .foregroundColor(.secondary)
-                                Text(formattedDate(nextDate))
-                                    .font(.headline)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("日历类型")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    
+                                    Text(event.calendarType.rawValue)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                }
                             }
                             
-                            // 如果是农历，显示下次日期的农历表示
-                            if event.calendarType == .lunar {
-                                HStack {
-                                    Text("下次农历:")
-                                        .font(.headline)
+                            HStack(alignment: .top) {
+                                Image(systemName: "calendar.badge.clock")
+                                    .frame(width: 24)
+                                    .foregroundColor(.secondary)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("日期")
+                                        .font(.subheadline)
                                         .foregroundColor(.secondary)
-                                    Text(formattedLunarDate(nextDate))
-                                        .font(.headline)
+                                    
+                                    if event.calendarType == .lunar {
+                                        Text(formattedLunarDate(event.targetDate))
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                    } else {
+                                        Text(formattedDate(event.targetDate))
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+                            }
+                            
+                            // 如果是农历，显示对应的公历日期
+                            if event.calendarType == .lunar {
+                                HStack(alignment: .top) {
+                                    Image(systemName: "calendar.day.timeline.left")
+                                        .frame(width: 24)
+                                        .foregroundColor(.secondary)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("公历日期")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        
+                                        Text(formattedDate(event.targetDate))
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+                            }
+                            
+                            HStack(alignment: .top) {
+                                Image(systemName: "repeat")
+                                    .frame(width: 24)
+                                    .foregroundColor(.secondary)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("重复周期")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    
+                                    Text(event.repeatCycle.rawValue)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                }
+                            }
+                            
+                            if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
+                                HStack(alignment: .top) {
+                                    Image(systemName: "calendar.badge.plus")
+                                        .frame(width: 24)
+                                        .foregroundColor(.secondary)
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text("下次日期")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        
+                                        Text(formattedDate(nextDate))
+                                            .font(.body)
+                                            .foregroundColor(.primary)
+                                    }
+                                }
+                                
+                                // 如果是农历，显示下次日期的农历表示
+                                if event.calendarType == .lunar {
+                                    HStack(alignment: .top) {
+                                        Image(systemName: "calendar.badge.plus")
+                                            .frame(width: 24)
+                                            .foregroundColor(.secondary)
+                                        
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text("下次农历")
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                            
+                                            Text(formattedLunarDate(nextDate))
+                                                .font(.body)
+                                                .foregroundColor(.primary)
+                                        }
+                                    }
                                 }
                             }
                         }
                         
                         if !event.note.isEmpty {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("备注:")
-                                    .font(.headline)
+                            HStack(alignment: .top) {
+                                Image(systemName: "note.text")
+                                    .frame(width: 24)
                                     .foregroundColor(.secondary)
-                                Text(event.note)
-                                    .padding(.top, 5)
+                                
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("备注")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    
+                                    Text(event.note)
+                                        .font(.body)
+                                        .foregroundColor(.primary)
+                                }
                             }
                         }
                     }
@@ -335,6 +395,7 @@ struct ContentView: View {
                 }
                 .padding()
             }
+            .background(Color(NSColor.windowBackgroundColor))
         }
     }
     
