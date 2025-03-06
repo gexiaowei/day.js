@@ -78,7 +78,9 @@ struct ContentView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: popoverType)
             .presentationCompactAdaptation(.popover)
+            .themeAware()
         }
+        .themeAware()
         .onAppear {
             countdownStore.load()
             
@@ -122,6 +124,7 @@ struct ContentView: View {
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 16)
+            .background(Color(NSColor.windowBackgroundColor))
             
             // 主内容区域
             if countdownStore.events.isEmpty {
@@ -223,6 +226,7 @@ struct ContentView: View {
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 16)
+            .background(Color(NSColor.windowBackgroundColor))
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {

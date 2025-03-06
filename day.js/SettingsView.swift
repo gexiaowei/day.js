@@ -3,15 +3,18 @@ import SwiftUI
 // 创建一个可观察对象来管理设置视图的状态
 class SettingsState: ObservableObject {
     @Published var selectedTab: Int = 0
+    @Published var selectedTheme: Int = 0 // 添加主题选择状态
 }
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var settingsState: SettingsState
+    @ObservedObject private var themeManager = ThemeManager.shared
     
     // 通用设置
     @AppStorage("launchAtLogin") private var launchAtLogin = false
     @AppStorage("enableNotifications") private var enableNotifications = true
+    @AppStorage("appTheme") private var appTheme = 0 // 添加主题存储
     
     // 同步设置
     @AppStorage("enableICloudSync") private var enableICloudSync = false
@@ -21,7 +24,7 @@ struct SettingsView: View {
             // 内容区域 - 预加载所有视图并使用透明度动画
             ZStack {
                 // 通用设置
-                GeneralSettingsView(launchAtLogin: $launchAtLogin, enableNotifications: $enableNotifications)
+                GeneralSettingsView(launchAtLogin: $launchAtLogin, enableNotifications: $enableNotifications, appTheme: $appTheme)
                     .opacity(settingsState.selectedTab == 0 ? 1 : 0)
                     .zIndex(settingsState.selectedTab == 0 ? 1 : 0)
                 
@@ -38,6 +41,11 @@ struct SettingsView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .frame(width: 500, height: 500)
+        .themeAware() // 应用主题感知修饰器
+        .onChange(of: appTheme) { oldValue, newValue in
+            // 当主题设置变化时，应用新主题
+            themeManager.updateTheme(to: AppThemeType(rawValue: newValue) ?? .system)
+        }
     }
 }
 
@@ -133,6 +141,8 @@ struct RectCorner: OptionSet {
 struct GeneralSettingsView: View {
     @Binding var launchAtLogin: Bool
     @Binding var enableNotifications: Bool
+    @Binding var appTheme: Int
+    @ObservedObject private var themeManager = ThemeManager.shared
     
     var body: some View {
         ScrollView {
@@ -152,16 +162,36 @@ struct GeneralSettingsView: View {
                 
                 SettingsSectionHeader(title: "外观")
                 
-                Picker("应用主题", selection: .constant(0)) {
-                    Text("跟随系统").tag(0)
-                    Text("浅色").tag(1)
-                    Text("深色").tag(2)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("应用主题")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal)
+                    
+                    VStack(alignment: .leading, spacing: 8) {
+                        RadioButton(id: 0, label: "跟随系统", isSelected: appTheme == 0) {
+                            appTheme = $0
+                            themeManager.updateTheme(to: .system)
+                        }
+                        .padding(.horizontal)
+                        
+                        RadioButton(id: 1, label: "浅色", isSelected: appTheme == 1) {
+                            appTheme = $0
+                            themeManager.updateTheme(to: .light)
+                        }
+                        .padding(.horizontal)
+                        
+                        RadioButton(id: 2, label: "深色", isSelected: appTheme == 2) {
+                            appTheme = $0
+                            themeManager.updateTheme(to: .dark)
+                        }
+                        .padding(.horizontal)
+                    }
                 }
-                .pickerStyle(.menu)
-                .padding(.horizontal)
             }
             .padding()
         }
+        .themeAware() // 应用主题感知修饰器
     }
 }
 
@@ -217,6 +247,7 @@ struct SyncSettingsView: View {
             }
             .padding()
         }
+        .themeAware() // 应用主题感知修饰器
     }
 }
 
@@ -283,6 +314,7 @@ struct AboutSettingsView: View {
             }
             .padding()
         }
+        .themeAware() // 应用主题感知修饰器
     }
 }
 
@@ -313,5 +345,32 @@ struct SettingsSectionHeader: View {
             .foregroundColor(.secondary)
             .padding(.horizontal)
             .padding(.top, 8)
+    }
+}
+
+// 添加 RadioButton 组件
+struct RadioButton: View {
+    let id: Int
+    let label: String
+    let isSelected: Bool
+    let callback: ((Int) -> Void)?
+    
+    var body: some View {
+        Button(action: {
+            if let callback = self.callback {
+                callback(self.id)
+            }
+        }) {
+            HStack(spacing: 10) {
+                Image(systemName: isSelected ? "circle.inset.filled" : "circle")
+                    .foregroundColor(isSelected ? .accentColor : .secondary)
+                
+                Text(label)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+            }
+        }
+        .buttonStyle(.plain)
     }
 } 

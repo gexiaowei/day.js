@@ -67,6 +67,7 @@ struct AddEventView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
+        .background(Color(NSColor.windowBackgroundColor))
     }
     
     // MARK: - Event Info Section

@@ -157,10 +157,14 @@ struct EditEventView: View {
     @State private var selectedColor: String
     @State private var note: String
     @State private var imageData: Data?
+    @State private var selectedItem: PhotosPickerItem?
+    
+    let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
     
     init(countdownStore: CountdownStore, event: CountdownEvent) {
         self.countdownStore = countdownStore
         self.event = event
+        
         _title = State(initialValue: event.title)
         _targetDate = State(initialValue: event.targetDate)
         _selectedCalendarType = State(initialValue: event.calendarType)
@@ -169,8 +173,6 @@ struct EditEventView: View {
         _note = State(initialValue: event.note)
         _imageData = State(initialValue: event.imageData)
     }
-    
-    let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
     
     var body: some View {
         VStack(spacing: 0) {
@@ -233,6 +235,7 @@ struct EditEventView: View {
         }
         .padding(.horizontal)
         .padding(.vertical, 12)
+        .background(Color(NSColor.windowBackgroundColor))
     }
     
     // MARK: - Event Info Section

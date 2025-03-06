@@ -14,6 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
     var settingsWindow: NSWindow?
     var settingsViewController: NSHostingController<AnyView>?
     var settingsState = SettingsState()
+    let themeManager = ThemeManager.shared
         
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 隐藏Dock栏图标
@@ -21,6 +22,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         
         // 创建状态栏图标
         setupStatusBarItem()
+        
+        // 应用主题设置
+        themeManager.applyTheme()
     }
     
     func setupStatusBarItem() {
