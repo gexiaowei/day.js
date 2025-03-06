@@ -87,6 +87,18 @@ struct ContentView: View {
         }
         .onAppear {
             countdownStore.load()
+            
+            // 添加通知监听，当删除事件时返回到事件列表
+            NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("ReturnToEventList"),
+                object: nil,
+                queue: .main
+            ) { _ in
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    currentView = .eventList
+                    showingPopover = false
+                }
+            }
         }
     }
     
@@ -95,6 +107,8 @@ struct ContentView: View {
         VStack {
             // 顶部标题和添加按钮
             HStack {
+                Spacer()
+                
                 Text("倒计时")
                     .font(.title)
                     .fontWeight(.bold)
@@ -108,9 +122,7 @@ struct ContentView: View {
                     Image(systemName: "plus")
                         .font(.system(size: 16, weight: .bold))
                         .padding(8)
-                        .background(Circle().fill(Color.blue))
-                        .foregroundColor(.white)
-                        .shadow(color: Color.blue.opacity(0.3), radius: 3, x: 0, y: 2)
+                        .foregroundColor(.primary)
                 }
                 .id("addButton")
             }
@@ -184,14 +196,17 @@ struct ContentView: View {
                         currentView = .eventList
                     }
                 } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 14, weight: .semibold))
-                        Text("返回")
-                            .font(.system(size: 14, weight: .semibold))
-                    }
-                    .foregroundColor(.blue)
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(8)
+                        .foregroundColor(.primary)
                 }
+                
+                Spacer()
+                
+                Text(event.title)
+                    .font(.headline)
+                    .lineLimit(1)
                 
                 Spacer()
                 
@@ -199,9 +214,10 @@ struct ContentView: View {
                     popoverType = .edit
                     showingPopover = true
                 } label: {
-                    Text("编辑")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.blue)
+                    Image(systemName: "pencil")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(8)
+                        .foregroundColor(.primary)
                 }
             }
             .padding(.horizontal)

@@ -17,7 +17,49 @@ struct AddEventView: View {
     let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
     
     var body: some View {
-        NavigationStack {
+        VStack {
+            // 顶部标题和按钮
+            HStack {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(8)
+                        .foregroundColor(.primary)
+                }
+                
+                Spacer()
+                
+                Text("添加事件")
+                    .font(.headline)
+                    .lineLimit(1)
+                
+                Spacer()
+                
+                Button {
+                    let newEvent = CountdownEvent(
+                        title: title,
+                        targetDate: targetDate,
+                        calendarType: selectedCalendarType,
+                        repeatCycle: selectedRepeatCycle,
+                        color: selectedColor,
+                        note: note,
+                        imageData: imageData
+                    )
+                    countdownStore.addEvent(newEvent)
+                    dismiss()
+                } label: {
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 16, weight: .bold))
+                        .padding(8)
+                        .foregroundColor(.primary)
+                }
+                .disabled(title.isEmpty)
+            }
+            .padding(.horizontal)
+            .padding(.bottom, 10)
+            
             ScrollView {
                 VStack(spacing: 24) {
                     // 事件信息部分
@@ -231,42 +273,8 @@ struct AddEventView: View {
                         .cornerRadius(12)
                         .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                     }
-                    
-                    // 保存按钮
-                    Button(action: {
-                        let newEvent = CountdownEvent(
-                            title: title,
-                            targetDate: targetDate,
-                            calendarType: selectedCalendarType,
-                            repeatCycle: selectedRepeatCycle,
-                            color: selectedColor,
-                            note: note,
-                            imageData: imageData
-                        )
-                        countdownStore.addEvent(newEvent)
-                        dismiss()
-                    }) {
-                        Text("保存事件")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(title.isEmpty ? Color.gray : Color(selectedColor))
-                            .cornerRadius(12)
-                            .shadow(color: title.isEmpty ? Color.gray.opacity(0.3) : Color(selectedColor).opacity(0.3), radius: 5, x: 0, y: 2)
-                    }
-                    .disabled(title.isEmpty)
-                    .padding(.top, 8)
                 }
                 .padding()
-            }
-            .navigationTitle("添加新事件")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") {
-                        dismiss()
-                    }
-                }
             }
         }
     }
