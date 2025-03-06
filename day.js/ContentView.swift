@@ -34,8 +34,8 @@ struct ContentView: View {
             if currentView == .eventList {
                 eventListView
                     .transition(.asymmetric(
-                        insertion: .opacity,
-                        removal: .move(edge: .leading)
+                        insertion: .move(edge: .leading).combined(with: .opacity),
+                        removal: .move(edge: .leading).combined(with: .opacity)
                     ))
             }
             
@@ -43,8 +43,8 @@ struct ContentView: View {
             if currentView == .eventDetail, let event = selectedEvent {
                 eventDetailView(event: event)
                     .transition(.asymmetric(
-                        insertion: .move(edge: .trailing),
-                        removal: .opacity
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .trailing).combined(with: .opacity)
                     ))
             }
         }
@@ -152,7 +152,7 @@ struct ContentView: View {
                                 .contentShape(RoundedRectangle(cornerRadius: 16))
                                 .onTapGesture {
                                     selectedEvent = event
-                                    withAnimation {
+                                    withAnimation(.easeInOut(duration: 0.3)) {
                                         currentView = .eventDetail
                                     }
                                 }
@@ -180,7 +180,7 @@ struct ContentView: View {
             // 顶部标题和返回按钮
             HStack {
                 Button {
-                    withAnimation {
+                    withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventList
                     }
                 } label: {
