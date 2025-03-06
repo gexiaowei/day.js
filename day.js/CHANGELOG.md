@@ -51,6 +51,7 @@
   - 统一了所有页面的设计语言，确保整个应用的一致性和专业性
 - 修复了编译器类型检查超时问题，通过将复杂的视图层次结构拆分为更小的组件，提高了代码的可维护性和编译效率
 - 修复了 UIKit 颜色在 macOS 平台上的兼容性问题，将 UIKit 颜色引用（如 .systemGroupedBackground）替换为 AppKit 颜色（如 NSColor.windowBackgroundColor），确保应用在 macOS 平台上正常编译和运行
+- 优化了 popover 内容的显示方式，将 TabView 替换为条件渲染，简化了视图结构，提高了代码的可读性和性能
 
 ### 添加
 

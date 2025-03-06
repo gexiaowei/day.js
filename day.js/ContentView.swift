@@ -50,38 +50,32 @@ struct ContentView: View {
         }
         .animation(.easeInOut(duration: 0.3), value: currentView)
         .popover(isPresented: $showingPopover) {
-            TabView(selection: $popoverType) {
-                AddEventView(countdownStore: countdownStore)
-                    .frame(width: 300, height: 500)
-                    .onDisappear {
-                        // 在添加页面关闭后重新加载数据
-                        countdownStore.load()
-                    }
-                    .tag(PopoverType.add)
-                
-                if let event = selectedEvent {
-                    EventDetailView(countdownStore: countdownStore, event: event)
+            VStack {
+                if popoverType == .add {
+                    AddEventView(countdownStore: countdownStore)
                         .frame(width: 300, height: 500)
                         .onDisappear {
-                            // 在详情页关闭后重新加载数据
+                            // 在添加页面关闭后重新加载数据
                             countdownStore.load()
                         }
-                        .tag(PopoverType.detail)
-                    
-                    EditEventView(countdownStore: countdownStore, event: event)
-                        .frame(width: 300, height: 600)
-                        .onDisappear {
-                            // 在编辑页面关闭后重新加载数据
-                            countdownStore.load()
-                        }
-                        .tag(PopoverType.edit)
+                } else if let event = selectedEvent {
+                    if popoverType == .detail {
+                        EventDetailView(countdownStore: countdownStore, event: event)
+                            .frame(width: 300, height: 500)
+                            .onDisappear {
+                                // 在详情页关闭后重新加载数据
+                                countdownStore.load()
+                            }
+                    } else if popoverType == .edit {
+                        EditEventView(countdownStore: countdownStore, event: event)
+                            .frame(width: 300, height: 600)
+                            .onDisappear {
+                                // 在编辑页面关闭后重新加载数据
+                                countdownStore.load()
+                            }
+                    }
                 }
             }
-            #if os(iOS)
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            #else
-            .tabViewStyle(.automatic)
-            #endif
             .animation(.easeInOut(duration: 0.2), value: popoverType)
             .presentationCompactAdaptation(.popover)
         }
