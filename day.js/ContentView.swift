@@ -104,14 +104,14 @@ struct ContentView: View {
         .popover(isPresented: $showingPopover) {
             if popoverType == .add {
                 AddEventView(countdownStore: countdownStore)
-                    .frame(width: 400, height: 500)
+                    .frame(width: 350, height: 500)
                     .onDisappear {
                         // 在添加页面关闭后重新加载数据
                         countdownStore.load()
                     }
             } else if popoverType == .detail, let event = selectedEvent {
                 EventDetailView(countdownStore: countdownStore, event: event)
-                    .frame(width: 400, height: 500)
+                    .frame(width: 350, height: 500)
                     .onDisappear {
                         // 在详情页关闭后重新加载数据
                         countdownStore.load()

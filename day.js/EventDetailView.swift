@@ -130,7 +130,7 @@ struct EventDetailView: View {
         }
         .popover(isPresented: $isEditing) {
             EditEventView(countdownStore: countdownStore, event: event)
-                .frame(width: 400, height: 600)
+                .frame(width: 350, height: 600)
         }
     }
     

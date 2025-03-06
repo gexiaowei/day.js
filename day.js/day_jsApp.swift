@@ -36,7 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         
         // 创建弹出窗口
         popover = NSPopover()
-        popover?.contentSize = NSSize(width: 400, height: 500)
+        popover?.contentSize = NSSize(width: 350, height: 500)
         popover?.behavior = .transient
         popover?.contentViewController = NSHostingController(rootView: ContentView())
     }
@@ -89,7 +89,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         
         // 创建弹出窗口
         let addEventPopover = NSPopover()
-        addEventPopover.contentSize = NSSize(width: 400, height: 600)
+        addEventPopover.contentSize = NSSize(width: 350, height: 600)
         addEventPopover.behavior = .transient
         addEventPopover.contentViewController = NSHostingController(rootView: addEventView)
         
