@@ -81,7 +81,7 @@ struct CountdownCardView: View {
     
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM/dd"
+        formatter.dateFormat = "yyyy年MM月dd日"
         return formatter.string(from: date)
     }
     

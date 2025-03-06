@@ -6,6 +6,8 @@
 
 - 修复了 macOS 平台上不支持的 `navigationBarTitleDisplayMode` 和 `navigationBarTrailing` 功能
 - 修复公历日期的重复周期计算问题，确保正确显示下一个重复日期的倒计时
+- 统一公历日期格式化为 "yyyy 年 MM 月 dd 日" 格式，保持界面一致性
+- 修复农历年份计算错误，使用公历年份代替内部计算年份，确保正确显示农历日期
 
 ### 添加
 

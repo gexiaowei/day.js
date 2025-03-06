@@ -16,7 +16,12 @@ class LunarDateConverter {
     static func getLunarComponents(from date: Date) -> (year: Int, month: Int, day: Int) {
         let calendar = Calendar(identifier: .chinese)
         let components = calendar.dateComponents([.year, .month, .day], from: date)
-        return (components.year!, components.month!, components.day!)
+        
+        // 获取公历年份
+        let gregorianCalendar = Calendar(identifier: .gregorian)
+        let gregorianYear = gregorianCalendar.component(.year, from: date)
+        
+        return (gregorianYear, components.month!, components.day!)
     }
     
     /// 从农历日期获取公历日期
@@ -26,16 +31,55 @@ class LunarDateConverter {
     ///   - lunarDay: 农历日
     /// - Returns: 公历日期
     static func solarDateFrom(lunarYear: Int, lunarMonth: Int, lunarDay: Int) -> Date? {
-        let calendar = Calendar(identifier: .chinese)
+        // 首先获取公历年的第一天
+        let gregorianCalendar = Calendar(identifier: .gregorian)
         var components = DateComponents()
         components.year = lunarYear
-        components.month = lunarMonth
-        components.day = lunarDay
+        components.month = 1
+        components.day = 1
         components.hour = 12
-        components.minute = 0
-        components.second = 0
         
-        return calendar.date(from: components)
+        guard let startOfYear = gregorianCalendar.date(from: components) else {
+            return nil
+        }
+        
+        // 然后使用农历日期查找
+        let chineseCalendar = Calendar(identifier: .chinese)
+        
+        // 从公历年的第一天开始，找到对应的农历日期
+        var currentDate = startOfYear
+        let endOfYear = gregorianCalendar.date(byAdding: .year, value: 1, to: startOfYear)!
+        
+        while currentDate < endOfYear {
+            let lunarComponents = chineseCalendar.dateComponents([.month, .day], from: currentDate)
+            
+            if lunarComponents.month == lunarMonth && lunarComponents.day == lunarDay {
+                return currentDate
+            }
+            
+            currentDate = gregorianCalendar.date(byAdding: .day, value: 1, to: currentDate)!
+        }
+        
+        // 如果在当年找不到，尝试下一年
+        components.year = lunarYear + 1
+        guard let nextYearStart = gregorianCalendar.date(from: components) else {
+            return nil
+        }
+        
+        currentDate = nextYearStart
+        let endOfNextYear = gregorianCalendar.date(byAdding: .year, value: 1, to: nextYearStart)!
+        
+        while currentDate < endOfNextYear {
+            let lunarComponents = chineseCalendar.dateComponents([.month, .day], from: currentDate)
+            
+            if lunarComponents.month == lunarMonth && lunarComponents.day == lunarDay {
+                return currentDate
+            }
+            
+            currentDate = gregorianCalendar.date(byAdding: .day, value: 1, to: currentDate)!
+        }
+        
+        return nil
     }
     
     /// 获取下一个农历重复日期
@@ -49,6 +93,11 @@ class LunarDateConverter {
         // 获取当前日期的农历组件
         let lunarComponents = getLunarComponents(from: date)
         
+        // 获取当前日期
+        let currentDate = Date()
+        let gregorianCalendar = Calendar(identifier: .gregorian)
+        let currentYear = gregorianCalendar.component(.year, from: currentDate)
+        
         // 根据重复周期计算下一个农历日期
         var nextLunarYear = lunarComponents.year
         var nextLunarMonth = lunarComponents.month
@@ -57,7 +106,7 @@ class LunarDateConverter {
         switch repeatCycle {
         case .daily:
             // 每天重复，直接返回明天
-            return Calendar.current.date(byAdding: .day, value: 1, to: Date())
+            return gregorianCalendar.date(byAdding: .day, value: 1, to: currentDate)
             
         case .monthly:
             // 每月重复，农历月份加1
@@ -67,9 +116,18 @@ class LunarDateConverter {
                 nextLunarYear += 1
             }
             
+            // 如果计算的年份小于当前年份，则使用当前年份
+            if nextLunarYear < currentYear {
+                nextLunarYear = currentYear
+            }
+            
         case .yearly:
-            // 每年重复，农历年份加1
-            nextLunarYear += 1
+            // 如果目标日期已过，则使用下一年
+            if nextLunarYear < currentYear || (nextLunarYear == currentYear && solarDateFrom(lunarYear: nextLunarYear, lunarMonth: nextLunarMonth, lunarDay: nextLunarDay)! < currentDate) {
+                nextLunarYear = currentYear + 1
+            } else {
+                nextLunarYear = currentYear
+            }
             
         case .none:
             return nil

@@ -122,7 +122,7 @@ struct EventDetailView: View {
     
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
+        formatter.dateFormat = "yyyy年MM月dd日"
         return formatter.string(from: date)
     }
     
