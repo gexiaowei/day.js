@@ -48,6 +48,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
             // 右键点击显示菜单
             let menu = NSMenu()
             
+            // 添加"新增"选项
+            menu.addItem(NSMenuItem(title: "新增", action: #selector(openAddEvent), keyEquivalent: "n"))
+            menu.addItem(NSMenuItem.separator())
             menu.addItem(NSMenuItem(title: "设置", action: #selector(openSettings), keyEquivalent: ","))
             menu.addItem(NSMenuItem.separator())
             menu.addItem(NSMenuItem(title: "退出", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
@@ -70,6 +73,29 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
                     }
                 }
             }
+        }
+    }
+    
+    // 打开添加事件页面
+    @objc func openAddEvent() {
+        // 创建一个新的CountdownStore实例
+        let countdownStore = CountdownStore()
+        
+        // 加载已有的数据
+        countdownStore.load()
+        
+        // 创建添加事件视图
+        let addEventView = AddEventView(countdownStore: countdownStore)
+        
+        // 创建弹出窗口
+        let addEventPopover = NSPopover()
+        addEventPopover.contentSize = NSSize(width: 400, height: 600)
+        addEventPopover.behavior = .transient
+        addEventPopover.contentViewController = NSHostingController(rootView: addEventView)
+        
+        // 显示弹出窗口
+        if let button = statusItem?.button {
+            addEventPopover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         }
     }
     
