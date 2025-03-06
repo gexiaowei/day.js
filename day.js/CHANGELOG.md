@@ -5,6 +5,7 @@
 ### 修复
 
 - 修复了 macOS 平台上不支持的 `navigationBarTitleDisplayMode` 和 `navigationBarTrailing` 功能
+- 修复公历日期的重复周期计算问题，确保正确显示下一个重复日期的倒计时
 
 ### 添加
 
