@@ -31,6 +31,13 @@
 - 修复了类型转换问题，使用 AnyView 包装 SettingsView 并应用 EnvironmentObject，解决了编译错误
 - 修复了任务栏图标右键菜单"新增"选项的访问权限问题，通过创建新的 CountdownStore 实例并加载数据解决
 - 修复了 ContentView 中 popover 显示问题，统一使用 showingPopover 和 popoverType 变量控制 popover 的显示，解决点击添加按钮和事件卡片无反应的问题
+- 优化了 popover 内视图切换的过渡动画，添加了淡入淡出效果，提高了用户体验
+- 使用 iOS 16.4+ 新特性 presentationCompactAdaptation，确保在所有设备上都使用 popover 样式，保持界面一致性
+- 重构了 popover 内视图切换的实现方式，使用 TabView 替代条件渲染，提供更流畅的页面切换体验和更好的状态管理
+- 修复了 macOS 平台上不支持 .page(indexDisplayMode:) 的问题，使用条件编译为不同平台提供兼容的 TabViewStyle
+- 重新设计了主界面导航方式，实现了在主界面中直接切换事件列表和事件详情视图，添加了平滑的过渡动画，提高了用户体验
+- 修复了 EventDetailView 调用中多余的 popoverType 参数，解决了编译错误
+- 修复了 EditEventView 调用中多余的 popoverType 参数，解决了编译错误
 
 ### 添加
 
