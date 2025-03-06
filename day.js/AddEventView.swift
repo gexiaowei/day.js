@@ -6,6 +6,8 @@ struct AddEventView: View {
     
     @State private var title = ""
     @State private var targetDate = Date()
+    @State private var selectedCalendarType = CalendarType.solar
+    @State private var selectedRepeatCycle = RepeatCycle.none
     @State private var selectedColor = "blue"
     @State private var note = ""
     
@@ -16,7 +18,21 @@ struct AddEventView: View {
             Form {
                 Section(header: Text("事件信息")) {
                     TextField("标题", text: $title)
+                    
+                    Picker("日历类型", selection: $selectedCalendarType) {
+                        ForEach(CalendarType.allCases, id: \.self) { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    
                     DatePicker("目标日期", selection: $targetDate, displayedComponents: .date)
+                    
+                    Picker("重复周期", selection: $selectedRepeatCycle) {
+                        ForEach(RepeatCycle.allCases, id: \.self) { cycle in
+                            Text(cycle.rawValue).tag(cycle)
+                        }
+                    }
                 }
                 
                 Section(header: Text("颜色")) {
@@ -58,6 +74,8 @@ struct AddEventView: View {
                         let newEvent = CountdownEvent(
                             title: title,
                             targetDate: targetDate,
+                            calendarType: selectedCalendarType,
+                            repeatCycle: selectedRepeatCycle,
                             color: selectedColor,
                             note: note
                         )

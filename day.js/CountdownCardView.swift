@@ -13,6 +13,13 @@ struct CountdownCardView: View {
                 
                 Spacer()
                 
+                if event.repeatCycle != .none {
+                    Image(systemName: "repeat")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                        .padding(.trailing, 4)
+                }
+                
                 Circle()
                     .fill(Color(event.color))
                     .frame(width: 12, height: 12)
@@ -29,9 +36,27 @@ struct CountdownCardView: View {
                 
                 Spacer()
                 
-                Text(formattedDate(event.targetDate))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .trailing, spacing: 2) {
+                    HStack(spacing: 4) {
+                        Text(event.calendarType.rawValue)
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        
+                        if event.repeatCycle != .none {
+                            Text("·")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                            
+                            Text(event.repeatCycle.rawValue)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    Text(formattedDate(event.targetDate))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .padding()

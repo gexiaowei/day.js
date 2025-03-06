@@ -35,11 +35,37 @@ struct EventDetailView: View {
                     }
                     
                     HStack {
+                        Text("日历类型:")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(event.calendarType.rawValue)
+                            .font(.headline)
+                    }
+                    
+                    HStack {
                         Text("日期:")
                             .font(.headline)
                             .foregroundColor(.secondary)
                         Text(formattedDate(event.targetDate))
                             .font(.headline)
+                    }
+                    
+                    HStack {
+                        Text("重复周期:")
+                            .font(.headline)
+                            .foregroundColor(.secondary)
+                        Text(event.repeatCycle.rawValue)
+                            .font(.headline)
+                    }
+                    
+                    if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
+                        HStack {
+                            Text("下次日期:")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Text(formattedDate(nextDate))
+                                .font(.headline)
+                        }
                     }
                     
                     if !event.note.isEmpty {
@@ -81,6 +107,8 @@ struct EditEventView: View {
     
     @State private var title: String
     @State private var targetDate: Date
+    @State private var selectedCalendarType: CalendarType
+    @State private var selectedRepeatCycle: RepeatCycle
     @State private var selectedColor: String
     @State private var note: String
     
@@ -89,6 +117,8 @@ struct EditEventView: View {
         self.event = event
         _title = State(initialValue: event.title)
         _targetDate = State(initialValue: event.targetDate)
+        _selectedCalendarType = State(initialValue: event.calendarType)
+        _selectedRepeatCycle = State(initialValue: event.repeatCycle)
         _selectedColor = State(initialValue: event.color)
         _note = State(initialValue: event.note)
     }
@@ -100,7 +130,21 @@ struct EditEventView: View {
             Form {
                 Section(header: Text("事件信息")) {
                     TextField("标题", text: $title)
+                    
+                    Picker("日历类型", selection: $selectedCalendarType) {
+                        ForEach(CalendarType.allCases, id: \.self) { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    
                     DatePicker("目标日期", selection: $targetDate, displayedComponents: .date)
+                    
+                    Picker("重复周期", selection: $selectedRepeatCycle) {
+                        ForEach(RepeatCycle.allCases, id: \.self) { cycle in
+                            Text(cycle.rawValue).tag(cycle)
+                        }
+                    }
                 }
                 
                 Section(header: Text("颜色")) {
@@ -143,6 +187,8 @@ struct EditEventView: View {
                             id: event.id,
                             title: title,
                             targetDate: targetDate,
+                            calendarType: selectedCalendarType,
+                            repeatCycle: selectedRepeatCycle,
                             color: selectedColor,
                             note: note
                         )
