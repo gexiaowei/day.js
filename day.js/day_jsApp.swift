@@ -88,8 +88,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         // 加载已有的数据
         countdownStore.load()
         
-        // 创建添加事件视图
-        let addEventView = AddEventView(countdownStore: countdownStore)
+        // 创建添加事件视图并应用主题感知修饰器
+        let addEventView = AddEventView(countdownStore: countdownStore).themeAware()
         
         // 创建弹出窗口
         let addEventPopover = NSPopover()
