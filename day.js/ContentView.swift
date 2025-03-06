@@ -11,7 +11,7 @@ struct ContentView: View {
     @StateObject private var countdownStore = CountdownStore()
     @State private var showingAddEvent = false
     @State private var searchText = ""
-    @State private var showingAbout = false
+    @State private var showingSettings = false
     
     var filteredEvents: [CountdownEvent] {
         if searchText.isEmpty {
@@ -81,9 +81,9 @@ struct ContentView: View {
                 
                 ToolbarItem(placement: .automatic) {
                     Button {
-                        showingAbout = true
+                        showingSettings = true
                     } label: {
-                        Image(systemName: "info.circle")
+                        Image(systemName: "gearshape")
                             .font(.system(size: 16))
                     }
                 }
@@ -91,8 +91,8 @@ struct ContentView: View {
             .sheet(isPresented: $showingAddEvent) {
                 AddEventView(countdownStore: countdownStore)
             }
-            .sheet(isPresented: $showingAbout) {
-                AboutView()
+            .sheet(isPresented: $showingSettings) {
+                SettingsView()
             }
         }
         .onAppear {
