@@ -23,11 +23,24 @@ struct CountdownEvent: Identifiable, Codable {
     
     var daysRemaining: Int {
         let calendar = Calendar.current
+        
+        // 如果是农历且有重复周期，需要计算到下一个农历日期的天数
+        if calendarType == .lunar && repeatCycle != .none {
+            if let nextDate = nextOccurrence() {
+                let components = calendar.dateComponents([.day], from: Date(), to: nextDate)
+                return components.day ?? 0
+            }
+        }
+        
         let components = calendar.dateComponents([.day], from: Date(), to: targetDate)
         return components.day ?? 0
     }
     
     var isPast: Bool {
+        // 如果有重复周期，则永远不会过期
+        if repeatCycle != .none {
+            return false
+        }
         return daysRemaining < 0
     }
     
@@ -35,6 +48,12 @@ struct CountdownEvent: Identifiable, Codable {
     func nextOccurrence(after date: Date = Date()) -> Date? {
         guard repeatCycle != .none else { return nil }
         
+        // 如果是农历日期，使用农历日期转换器
+        if calendarType == .lunar {
+            return LunarDateConverter.nextLunarDate(from: targetDate, repeatCycle: repeatCycle)
+        }
+        
+        // 公历日期处理逻辑
         let calendar = Calendar.current
         let targetComponents = calendar.dateComponents([.year, .month, .day], from: targetDate)
         let currentComponents = calendar.dateComponents([.year, .month, .day], from: date)

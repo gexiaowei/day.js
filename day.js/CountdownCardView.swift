@@ -53,9 +53,22 @@ struct CountdownCardView: View {
                         }
                     }
                     
-                    Text(formattedDate(event.targetDate))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    if event.calendarType == .lunar {
+                        Text(formattedLunarDate(event.targetDate))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text(formattedDate(event.targetDate))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    // 如果是农历且有重复周期，显示下一个日期
+                    if event.calendarType == .lunar && event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
+                        Text("下次: \(formattedDate(nextDate))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
         }
@@ -70,5 +83,9 @@ struct CountdownCardView: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy/MM/dd"
         return formatter.string(from: date)
+    }
+    
+    private func formattedLunarDate(_ date: Date) -> String {
+        return LunarDateConverter.formatLunarDate(from: date)
     }
 } 

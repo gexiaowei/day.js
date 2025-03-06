@@ -46,8 +46,24 @@ struct EventDetailView: View {
                         Text("日期:")
                             .font(.headline)
                             .foregroundColor(.secondary)
-                        Text(formattedDate(event.targetDate))
-                            .font(.headline)
+                        if event.calendarType == .lunar {
+                            Text(formattedLunarDate(event.targetDate))
+                                .font(.headline)
+                        } else {
+                            Text(formattedDate(event.targetDate))
+                                .font(.headline)
+                        }
+                    }
+                    
+                    // 如果是农历，显示对应的公历日期
+                    if event.calendarType == .lunar {
+                        HStack {
+                            Text("公历日期:")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                            Text(formattedDate(event.targetDate))
+                                .font(.headline)
+                        }
                     }
                     
                     HStack {
@@ -65,6 +81,17 @@ struct EventDetailView: View {
                                 .foregroundColor(.secondary)
                             Text(formattedDate(nextDate))
                                 .font(.headline)
+                        }
+                        
+                        // 如果是农历，显示下次日期的农历表示
+                        if event.calendarType == .lunar {
+                            HStack {
+                                Text("下次农历:")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                Text(formattedLunarDate(nextDate))
+                                    .font(.headline)
+                            }
                         }
                     }
                     
@@ -97,6 +124,10 @@ struct EventDetailView: View {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         return formatter.string(from: date)
+    }
+    
+    private func formattedLunarDate(_ date: Date) -> String {
+        return LunarDateConverter.formatLunarDate(from: date)
     }
 }
 
