@@ -12,7 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem?
     var popover: NSPopover?
     var settingsWindow: NSWindow?
-    
+        
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 隐藏Dock栏图标
         NSApp.setActivationPolicy(.accessory)
@@ -98,6 +98,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 @main
 struct day_jsApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
+    init() {
+        // 不在这里设置激活策略，完全依赖Info.plist中的LSUIElement设置
+    }
     
     var body: some Scene {
         Settings {
