@@ -96,6 +96,10 @@ struct ContentView: View {
                 }
             }
         }
+        .onDisappear {
+            // 移除通知监听
+            NotificationCenter.default.removeObserver(self)
+        }
     }
     
     // 事件列表视图

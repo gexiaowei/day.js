@@ -42,7 +42,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         popover = NSPopover()
         popover?.contentSize = NSSize(width: 350, height: 500)
         popover?.behavior = .transient
-        popover?.contentViewController = NSHostingController(rootView: ContentView())
+        
+        // 创建内容视图并应用主题感知修饰器
+        let contentView = ContentView().themeAware()
+        popover?.contentViewController = NSHostingController(rootView: contentView)
     }
     
     @objc func statusBarButtonClicked(_ sender: NSStatusBarButton) {

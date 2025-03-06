@@ -219,31 +219,6 @@ struct SyncSettingsView: View {
                         .foregroundColor(.secondary)
                         .padding(.horizontal)
                 }
-                
-                Divider()
-                    .padding(.vertical, 8)
-                
-                SettingsSectionHeader(title: "数据管理")
-                
-                Button(action: {
-                    // 导出数据功能（暂未实现）
-                }) {
-                    Label("导出数据", systemImage: "square.and.arrow.up")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                
-                Button(action: {
-                    // 导入数据功能（暂未实现）
-                }) {
-                    Label("导入数据", systemImage: "square.and.arrow.down")
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.horizontal)
-                .padding(.vertical, 8)
             }
             .padding()
         }
