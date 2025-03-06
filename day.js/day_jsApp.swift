@@ -12,6 +12,17 @@ struct day_jsApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .frame(minWidth: 400, minHeight: 500)
+                .onAppear {
+                    // 设置窗口标题
+                    NSWindow.allowsAutomaticWindowTabbing = false
+                    if let window = NSApplication.shared.windows.first {
+                        window.title = "倒计时"
+                        window.titleVisibility = .visible
+                    }
+                }
         }
+        .windowStyle(.hiddenTitleBar)
+        .windowResizability(.contentSize)
     }
 }
