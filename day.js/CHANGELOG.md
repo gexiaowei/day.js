@@ -30,6 +30,7 @@
 - 彻底重构了设置窗口标签页切换功能，使用 ObservableObject 和 EnvironmentObject 实现响应式标签切换，解决了点击标签无法切换页面的问题
 - 修复了类型转换问题，使用 AnyView 包装 SettingsView 并应用 EnvironmentObject，解决了编译错误
 - 修复了任务栏图标右键菜单"新增"选项的访问权限问题，通过创建新的 CountdownStore 实例并加载数据解决
+- 修复了 ContentView 中 popover 显示问题，统一使用 showingPopover 和 popoverType 变量控制 popover 的显示，解决点击添加按钮和事件卡片无反应的问题
 
 ### 添加
 
@@ -58,3 +59,5 @@
 - 重新设计了主界面，移除了 NavigationStack 和 toolbar，将添加按钮移至右下角，设置按钮移至右上角，优化了在 popover 中的显示效果
 - 从主界面移除设置按钮，统一通过任务栏图标右键菜单进入设置界面，简化用户界面
 - 将主界面的添加按钮从右下角移至右上角，与标题栏集成，优化界面布局和用户体验
+- 将事件详情页面从 sheet 模式改为 popover 模式显示，提高在小窗口中的用户体验和视觉连贯性
+- 统一所有事件操作（新增/编辑/查看）均使用 popover 模式显示，保持界面一致性和操作流畅性

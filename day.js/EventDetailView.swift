@@ -128,8 +128,9 @@ struct EventDetailView: View {
                 isEditing = true
             }
         }
-        .sheet(isPresented: $isEditing) {
+        .popover(isPresented: $isEditing) {
             EditEventView(countdownStore: countdownStore, event: event)
+                .frame(width: 400, height: 600)
         }
     }
     
