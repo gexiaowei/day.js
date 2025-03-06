@@ -101,7 +101,7 @@ class LunarDateConverter {
         // 根据重复周期计算下一个农历日期
         var nextLunarYear = lunarComponents.year
         var nextLunarMonth = lunarComponents.month
-        var nextLunarDay = lunarComponents.day
+        let nextLunarDay = lunarComponents.day
         
         switch repeatCycle {
         case .daily:

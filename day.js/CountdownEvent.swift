@@ -69,7 +69,7 @@ struct CountdownEvent: Identifiable, Codable {
             // 如果是每月重复，返回下个月的相同日期
             // 首先检查目标日期是否已经过去
             let targetDay = targetComponents.day!
-            let targetMonth = targetComponents.month!
+            let _ = targetComponents.month!
             
             // 计算当前月份的目标日期
             nextComponents.year = currentComponents.year
