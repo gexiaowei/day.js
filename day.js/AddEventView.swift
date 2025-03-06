@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import AppKit
 
 struct AddEventView: View {
     @Environment(\.dismiss) private var dismiss
@@ -10,6 +12,8 @@ struct AddEventView: View {
     @State private var selectedRepeatCycle = RepeatCycle.none
     @State private var selectedColor = "blue"
     @State private var note = ""
+    @State private var imageData: Data?
+    @State private var showingFileImporter = false
     
     let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
     
@@ -31,6 +35,44 @@ struct AddEventView: View {
                     Picker("重复周期", selection: $selectedRepeatCycle) {
                         ForEach(RepeatCycle.allCases, id: \.self) { cycle in
                             Text(cycle.rawValue).tag(cycle)
+                        }
+                    }
+                }
+                
+                Section(header: Text("图片")) {
+                    VStack {
+                        if let imageData = imageData, let nsImage = NSImage(data: imageData) {
+                            Image(nsImage: nsImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Rectangle())
+                                .cornerRadius(8)
+                                .padding(.vertical, 5)
+                            
+                            Button("删除图片") {
+                                self.imageData = nil
+                            }
+                            .foregroundColor(.red)
+                        } else {
+                            Button("选择本地图片") {
+                                let openPanel = NSOpenPanel()
+                                openPanel.allowsMultipleSelection = false
+                                openPanel.canChooseDirectories = false
+                                openPanel.canChooseFiles = true
+                                openPanel.allowedContentTypes = [.image]
+                                
+                                if openPanel.runModal() == .OK {
+                                    if let url = openPanel.url {
+                                        do {
+                                            let imageData = try Data(contentsOf: url)
+                                            self.imageData = imageData
+                                        } catch {
+                                            print("无法加载图片: \(error.localizedDescription)")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -77,7 +119,8 @@ struct AddEventView: View {
                             calendarType: selectedCalendarType,
                             repeatCycle: selectedRepeatCycle,
                             color: selectedColor,
-                            note: note
+                            note: note,
+                            imageData: imageData
                         )
                         countdownStore.addEvent(newEvent)
                         dismiss()

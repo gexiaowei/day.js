@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct CountdownCardView: View {
     let event: CountdownEvent
@@ -23,6 +24,17 @@ struct CountdownCardView: View {
                 Circle()
                     .fill(Color(event.color))
                     .frame(width: 12, height: 12)
+            }
+            
+            // 如果有图片，显示图片
+            if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
+                Image(nsImage: nsImage)
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 120, height: 120)
+                    .clipShape(Rectangle())
+                    .cornerRadius(8)
+                    .padding(.vertical, 5)
             }
             
             HStack(alignment: .lastTextBaseline) {

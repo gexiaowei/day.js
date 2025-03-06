@@ -1,4 +1,6 @@
 import SwiftUI
+import PhotosUI
+import AppKit
 
 struct EventDetailView: View {
     @ObservedObject var countdownStore: CountdownStore
@@ -23,6 +25,17 @@ struct EventDetailView: View {
                     Spacer()
                 }
                 .padding(.vertical, 30)
+                
+                // 如果有图片，显示图片
+                if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
+                    Image(nsImage: nsImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 200, height: 200)
+                        .clipShape(Rectangle())
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                }
                 
                 // 事件信息
                 VStack(alignment: .leading, spacing: 15) {
@@ -142,6 +155,8 @@ struct EditEventView: View {
     @State private var selectedRepeatCycle: RepeatCycle
     @State private var selectedColor: String
     @State private var note: String
+    @State private var imageData: Data?
+    @State private var showingFileImporter = false
     
     init(countdownStore: CountdownStore, event: CountdownEvent) {
         self.countdownStore = countdownStore
@@ -152,6 +167,7 @@ struct EditEventView: View {
         _selectedRepeatCycle = State(initialValue: event.repeatCycle)
         _selectedColor = State(initialValue: event.color)
         _note = State(initialValue: event.note)
+        _imageData = State(initialValue: event.imageData)
     }
     
     let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
@@ -174,6 +190,44 @@ struct EditEventView: View {
                     Picker("重复周期", selection: $selectedRepeatCycle) {
                         ForEach(RepeatCycle.allCases, id: \.self) { cycle in
                             Text(cycle.rawValue).tag(cycle)
+                        }
+                    }
+                }
+                
+                Section(header: Text("图片")) {
+                    VStack {
+                        if let imageData = imageData, let nsImage = NSImage(data: imageData) {
+                            Image(nsImage: nsImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 200, height: 200)
+                                .clipShape(Rectangle())
+                                .cornerRadius(8)
+                                .padding(.vertical, 5)
+                            
+                            Button("删除图片") {
+                                self.imageData = nil
+                            }
+                            .foregroundColor(.red)
+                        } else {
+                            Button("选择本地图片") {
+                                let openPanel = NSOpenPanel()
+                                openPanel.allowsMultipleSelection = false
+                                openPanel.canChooseDirectories = false
+                                openPanel.canChooseFiles = true
+                                openPanel.allowedContentTypes = [.image]
+                                
+                                if openPanel.runModal() == .OK {
+                                    if let url = openPanel.url {
+                                        do {
+                                            let imageData = try Data(contentsOf: url)
+                                            self.imageData = imageData
+                                        } catch {
+                                            print("无法加载图片: \(error.localizedDescription)")
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -221,7 +275,8 @@ struct EditEventView: View {
                             calendarType: selectedCalendarType,
                             repeatCycle: selectedRepeatCycle,
                             color: selectedColor,
-                            note: note
+                            note: note,
+                            imageData: imageData
                         )
                         countdownStore.updateEvent(updatedEvent)
                         dismiss()

@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 enum CalendarType: String, Codable, CaseIterable {
     case solar = "公历"
@@ -20,6 +21,23 @@ struct CountdownEvent: Identifiable, Codable {
     var repeatCycle: RepeatCycle
     var color: String // 存储颜色的字符串表示
     var note: String
+    var imageData: Data? // 存储用户上传的图片数据
+    
+    // 编码和解码自定义图片数据
+    enum CodingKeys: String, CodingKey {
+        case id, title, targetDate, calendarType, repeatCycle, color, note, imageData
+    }
+    
+    init(id: UUID = UUID(), title: String, targetDate: Date, calendarType: CalendarType, repeatCycle: RepeatCycle, color: String, note: String, imageData: Data? = nil) {
+        self.id = id
+        self.title = title
+        self.targetDate = targetDate
+        self.calendarType = calendarType
+        self.repeatCycle = repeatCycle
+        self.color = color
+        self.note = note
+        self.imageData = imageData
+    }
     
     var daysRemaining: Int {
         let calendar = Calendar.current
