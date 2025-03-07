@@ -76,7 +76,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
                     popover.performClose(sender)
                 } else {
                     if let button = statusItem?.button {
-                        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minX)
+                        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
                     }
                 }
             }

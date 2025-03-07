@@ -49,7 +49,7 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: currentView)
-        .popover(isPresented: $showingPopover, arrowEdge: .leading) {
+        .popover(isPresented: $showingPopover, arrowEdge: .bottom) {
             VStack {
                 if popoverType == .add {
                     AddEventView(countdownStore: countdownStore)
