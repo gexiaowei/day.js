@@ -49,7 +49,7 @@ struct ContentView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: currentView)
-        .popover(isPresented: $showingPopover) {
+        .popover(isPresented: $showingPopover, arrowEdge: .leading) {
             VStack {
                 if popoverType == .add {
                     AddEventView(countdownStore: countdownStore)
@@ -117,10 +117,7 @@ struct ContentView: View {
                     popoverType = .add
                     showingPopover = true
                 } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 22))
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundColor(.accentColor)
+                    SFSymbolIcon(symbol: .plus, size: 22, color: .accentColor).themeAware()
                 }
                 .id("addButton")
                 .buttonStyle(.plain)
@@ -201,9 +198,7 @@ struct ContentView: View {
                         currentView = .eventList
                     }
                 } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.accentColor)
+                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
                 }
                 .buttonStyle(.plain)
                 
@@ -220,10 +215,7 @@ struct ContentView: View {
                     popoverType = .edit
                     showingPopover = true
                 } label: {
-                    Image(systemName: "pencil.circle.fill")
-                        .font(.system(size: 22))
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundColor(.accentColor)
+                    SFSymbolIcon(symbol: .pencil, size: 22, color: .accentColor).themeAware()
                 }
                 .buttonStyle(.plain)
             }
@@ -265,9 +257,8 @@ struct ContentView: View {
                     VStack(alignment: .leading, spacing: 20) {
                         Group {
                             HStack(alignment: .top) {
-                                Image(systemName: "calendar")
+                                SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
                                     .frame(width: 24)
-                                    .foregroundColor(.secondary)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("日历类型")
@@ -281,9 +272,8 @@ struct ContentView: View {
                             }
                             
                             HStack(alignment: .top) {
-                                Image(systemName: "calendar.badge.clock")
+                                SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
                                     .frame(width: 24)
-                                    .foregroundColor(.secondary)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("日期")
@@ -305,9 +295,8 @@ struct ContentView: View {
                             // 如果是农历，显示对应的公历日期
                             if event.calendarType == .lunar {
                                 HStack(alignment: .top) {
-                                    Image(systemName: "calendar.day.timeline.left")
+                                    SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
                                         .frame(width: 24)
-                                        .foregroundColor(.secondary)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("公历日期")
@@ -322,9 +311,8 @@ struct ContentView: View {
                             }
                             
                             HStack(alignment: .top) {
-                                Image(systemName: "repeat")
+                                SFSymbolIcon(symbol: .repeatIcon, size: 24, color: .secondary).themeAware()
                                     .frame(width: 24)
-                                    .foregroundColor(.secondary)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("重复周期")
@@ -339,9 +327,8 @@ struct ContentView: View {
                             
                             if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
                                 HStack(alignment: .top) {
-                                    Image(systemName: "calendar.badge.plus")
+                                    SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
                                         .frame(width: 24)
-                                        .foregroundColor(.secondary)
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         Text("下次日期")
@@ -357,9 +344,8 @@ struct ContentView: View {
                                 // 如果是农历，显示下次日期的农历表示
                                 if event.calendarType == .lunar {
                                     HStack(alignment: .top) {
-                                        Image(systemName: "calendar.badge.plus")
+                                        SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
                                             .frame(width: 24)
-                                            .foregroundColor(.secondary)
                                         
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text("下次农历")
@@ -377,9 +363,8 @@ struct ContentView: View {
                         
                         if !event.note.isEmpty {
                             HStack(alignment: .top) {
-                                Image(systemName: "note.text")
+                                SFSymbolIcon(symbol: .note, size: 24, color: .secondary).themeAware()
                                     .frame(width: 24)
-                                    .foregroundColor(.secondary)
                                 
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text("备注")

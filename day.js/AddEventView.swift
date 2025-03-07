@@ -39,10 +39,7 @@ struct AddEventView: View {
             Button {
                 dismiss()
             } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 22))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.secondary)
+                SFSymbolIcon(symbol: .xmark, size: 22, color: .secondary).themeAware()
             }
             .buttonStyle(.plain)
             
@@ -57,10 +54,7 @@ struct AddEventView: View {
             Button {
                 saveEvent()
             } label: {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 22))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.accentColor)
+                SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
             }
             .disabled(title.isEmpty)
             .buttonStyle(.plain)
@@ -198,9 +192,7 @@ struct AddEventView: View {
             openImagePicker()
         }) {
             VStack(spacing: 12) {
-                Image(systemName: "photo.on.rectangle.angled")
-                    .font(.system(size: 40))
-                    .foregroundColor(.accentColor)
+                SFSymbolIcon(symbol: .image, size: 40, color: .accentColor).themeAware()
                 
                 Text("选择本地图片")
                     .font(.headline)
@@ -241,9 +233,7 @@ struct AddEventView: View {
                     .stroke(Color.white, lineWidth: 2)
                     .frame(width: 54, height: 54)
                 
-                Image(systemName: "checkmark")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.white)
+                SFSymbolIcon(symbol: .check, size: 16, color: .white)
             }
         }
         .onTapGesture {

@@ -158,6 +158,8 @@ struct EditEventView: View {
     @State private var note: String
     @State private var imageData: Data?
     @State private var selectedItem: PhotosPickerItem?
+    @State private var showDeleteAlert = false
+    @State private var showImagePicker = false
     
     let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
     
@@ -189,6 +191,20 @@ struct EditEventView: View {
             }
             .background(Color(NSColor.windowBackgroundColor))
         }
+        .alert("确认删除", isPresented: $showDeleteAlert) {
+            Button("取消", role: .cancel) { }
+            Button("删除", role: .destructive) {
+                deleteEvent()
+            }
+        } message: {
+            Text("确定要删除这个事件吗？此操作无法撤销。")
+        }
+        .onChange(of: showImagePicker) { oldValue, newValue in
+            if newValue {
+                openImagePicker()
+                showImagePicker = false
+            }
+        }
     }
     
     // MARK: - Header View
@@ -197,10 +213,7 @@ struct EditEventView: View {
             Button {
                 dismiss()
             } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 22))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.secondary)
+                SFSymbolIcon(symbol: .xmark, size: 22, color: .secondary).themeAware()
             }
             .buttonStyle(.plain)
             
@@ -213,24 +226,19 @@ struct EditEventView: View {
             Spacer()
             
             Button {
-                deleteEvent()
+                showDeleteAlert = true
             } label: {
-                Image(systemName: "trash.circle.fill")
-                    .font(.system(size: 22))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.red)
+                SFSymbolIcon(symbol: .trashCircle, size: 22, color: .red).themeAware()
             }
             .buttonStyle(.plain)
+            .padding(.trailing, 8)
             
             Button {
-                saveEvent()
+                countdownStore.save()
+                dismiss()
             } label: {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.system(size: 22))
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(.accentColor)
+                SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
             }
-            .disabled(title.isEmpty)
             .buttonStyle(.plain)
         }
         .padding(.horizontal)
@@ -363,12 +371,10 @@ struct EditEventView: View {
     
     private var imagePickerButton: some View {
         Button(action: {
-            openImagePicker()
+            showImagePicker = true
         }) {
             VStack(spacing: 12) {
-                Image(systemName: "photo.on.rectangle.angled")
-                    .font(.system(size: 40))
-                    .foregroundColor(.accentColor)
+                SFSymbolIcon(symbol: .image, size: 40, color: .accentColor).themeAware()
                 
                 Text("选择本地图片")
                     .font(.headline)
@@ -409,9 +415,7 @@ struct EditEventView: View {
                     .stroke(Color.white, lineWidth: 2)
                     .frame(width: 54, height: 54)
                 
-                Image(systemName: "checkmark")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.white)
+                SFSymbolIcon(symbol: .check, size: 16, color: .white).themeAware()
             }
         }
         .onTapGesture {
