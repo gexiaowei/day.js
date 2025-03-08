@@ -55,9 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
             // 右键点击显示菜单
             let menu = NSMenu()
             
-            // 添加"新增"选项
-            menu.addItem(NSMenuItem(title: "新增", action: #selector(openAddEvent), keyEquivalent: "n"))
-            menu.addItem(NSMenuItem.separator())
+            // 添加菜单项
             menu.addItem(NSMenuItem(title: "设置", action: #selector(openSettings), keyEquivalent: ","))
             menu.addItem(NSMenuItem.separator())
             menu.addItem(NSMenuItem(title: "退出", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
@@ -85,14 +83,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
     
     // 打开添加事件页面
     @objc func openAddEvent() {
-        // 获取主界面的 ContentView 实例
         if let contentViewController = popover?.contentViewController as? NSHostingController<ContentView> {
             let contentView = contentViewController.rootView
-            
-            // 切换到添加事件视图
-            withAnimation(.easeInOut(duration: 0.3)) {
-                contentView.currentView = .addEvent
-            }
+            contentView.showingPopover = true
+            contentView.popoverType = .add
+            contentView.currentView = .addEvent
             
             // 显示 popover
             if let button = statusItem?.button {

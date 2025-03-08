@@ -13,7 +13,19 @@ struct ContentView: View {
     @State private var showingAddEvent = false
     @State private var showingEventDetail = false
     @State private var selectedEvent: CountdownEvent? = nil
-    @State var showingPopover = false
+    @State var showingPopover: Bool = false {
+        didSet {
+            if !showingPopover {
+                // 当 popover 关闭时重新加载数据
+                countdownStore.load()
+                // 重置当前视图状态
+                currentView = .eventList
+            } else if popoverType == .add {
+                // 当显示 popover 且类型为 add 时，设置当前视图为添加事件
+                currentView = .addEvent
+            }
+        }
+    }
     @State var popoverType: PopoverType = .add
     @State var currentView: ViewType = .eventList
     
@@ -28,6 +40,12 @@ struct ContentView: View {
         case eventDetail
         case addEvent
         case editEvent
+    }
+    
+    // 添加一个公共方法用于显示添加事件界面
+    public func showAddEvent() {
+        showingPopover = true
+        popoverType = .add
     }
     
     var body: some View {
@@ -45,10 +63,49 @@ struct ContentView: View {
             }
             
             // 添加事件视图
-            addEventView
+            Group {
+                VStack(spacing: 0) {
+                    // 顶部标题和返回按钮
+                    HStack {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                currentView = .eventList
+                            }
+                        } label: {
+                            SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Spacer()
+                        
+                        Text("添加事件")
+                            .font(.headline)
+                            .lineLimit(1)
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            countdownStore.load()
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                currentView = .eventList
+                            }
+                        } label: {
+                            SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 16)
+                    .padding(.bottom, 16)
+                    .background(Color(NSColor.windowBackgroundColor))
+                    
+                    AddEventView(countdownStore: countdownStore)
+                }
                 .opacity(currentView == .addEvent ? 1 : 0)
                 .offset(x: currentView == .addEvent ? 0 : 500)
                 .zIndex(currentView == .addEvent ? 2 : 0)
+            }
             
             // 编辑事件视图
             if let event = selectedEvent {
@@ -62,12 +119,36 @@ struct ContentView: View {
         .popover(isPresented: $showingPopover, arrowEdge: .bottom) {
             VStack {
                 if popoverType == .add {
-                    AddEventView(countdownStore: countdownStore)
-                        .frame(width: 300, height: 500)
-                        .onDisappear {
-                            // 在添加页面关闭后重新加载数据
-                            countdownStore.load()
+                    VStack(spacing: 0) {
+                        // 顶部标题栏
+                        HStack {
+                            Text("添加事件")
+                                .font(.headline)
+                                .lineLimit(1)
+                                .foregroundColor(.primary)
+                            
+                            Spacer()
+                            
+                            Button {
+                                countdownStore.load()
+                                showingPopover = false
+                            } label: {
+                                SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
+                            }
+                            .buttonStyle(.plain)
                         }
+                        .padding(.horizontal)
+                        .padding(.top, 16)
+                        .padding(.bottom, 16)
+                        .background(Color(NSColor.windowBackgroundColor))
+                        
+                        AddEventView(countdownStore: countdownStore)
+                    }
+                    .frame(width: 300, height: 500)
+                    .onDisappear {
+                        // 在添加页面关闭后重新加载数据
+                        countdownStore.load()
+                    }
                 } else if let event = selectedEvent {
                     if popoverType == .detail {
                         EventDetailView(countdownStore: countdownStore, event: event)
@@ -395,48 +476,6 @@ struct ContentView: View {
                 .padding()
             }
             .background(Color(NSColor.windowBackgroundColor))
-        }
-    }
-    
-    // 添加事件视图
-    private var addEventView: some View {
-        VStack(spacing: 0) {
-            // 顶部标题和返回按钮
-            HStack {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .eventList
-                    }
-                } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
-                }
-                .buttonStyle(.plain)
-                
-                Spacer()
-                
-                Text("添加事件")
-                    .font(.headline)
-                    .lineLimit(1)
-                    .foregroundColor(.primary)
-                
-                Spacer()
-                
-                Button {
-                    countdownStore.load()
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .eventList
-                    }
-                } label: {
-                    SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
-            
-            AddEventView(countdownStore: countdownStore)
         }
     }
     
