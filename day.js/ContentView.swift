@@ -71,6 +71,9 @@ struct ContentView: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 currentView = .eventList
                             }
+                            if showingPopover {
+                                showingPopover = false
+                            }
                         } label: {
                             SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
                         }
@@ -89,6 +92,9 @@ struct ContentView: View {
                             countdownStore.load()
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 currentView = .eventList
+                            }
+                            if showingPopover {
+                                showingPopover = false
                             }
                         } label: {
                             SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
@@ -120,28 +126,6 @@ struct ContentView: View {
             VStack {
                 if popoverType == .add {
                     VStack(spacing: 0) {
-                        // 顶部标题栏
-                        HStack {
-                            Text("添加事件")
-                                .font(.headline)
-                                .lineLimit(1)
-                                .foregroundColor(.primary)
-                            
-                            Spacer()
-                            
-                            Button {
-                                countdownStore.load()
-                                showingPopover = false
-                            } label: {
-                                SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
-                            }
-                            .buttonStyle(.plain)
-                        }
-                        .padding(.horizontal)
-                        .padding(.top, 16)
-                        .padding(.bottom, 16)
-                        .background(Color(NSColor.windowBackgroundColor))
-                        
                         AddEventView(countdownStore: countdownStore)
                     }
                     .frame(width: 300, height: 500)
@@ -158,12 +142,14 @@ struct ContentView: View {
                                 countdownStore.load()
                             }
                     } else if popoverType == .edit {
-                        EditEventView(countdownStore: countdownStore, event: event)
-                            .frame(width: 300, height: 600)
-                            .onDisappear {
-                                // 在编辑页面关闭后重新加载数据
-                                countdownStore.load()
-                            }
+                        VStack(spacing: 0) {
+                            EditEventView(countdownStore: countdownStore, event: event)
+                        }
+                        .frame(width: 300, height: 600)
+                        .onDisappear {
+                            // 在编辑页面关闭后重新加载数据
+                            countdownStore.load()
+                        }
                     }
                 }
             }
@@ -488,6 +474,9 @@ struct ContentView: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
                     }
+                    if showingPopover {
+                        showingPopover = false
+                    }
                 } label: {
                     SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
                 }
@@ -495,7 +484,7 @@ struct ContentView: View {
                 
                 Spacer()
                 
-                Text("编辑事件")
+                Text("编辑事件1")
                     .font(.headline)
                     .lineLimit(1)
                     .foregroundColor(.primary)
@@ -506,6 +495,9 @@ struct ContentView: View {
                     countdownStore.load()
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
+                    }
+                    if showingPopover {
+                        showingPopover = false
                     }
                 } label: {
                     SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
