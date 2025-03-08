@@ -13,19 +13,21 @@ struct ContentView: View {
     @State private var showingAddEvent = false
     @State private var showingEventDetail = false
     @State private var selectedEvent: CountdownEvent? = nil
-    @State private var showingPopover = false
-    @State private var popoverType: PopoverType = .add
-    @State private var currentView: ViewType = .eventList
+    @State var showingPopover = false
+    @State var popoverType: PopoverType = .add
+    @State var currentView: ViewType = .eventList
     
-    enum PopoverType {
+    public enum PopoverType {
         case add
         case detail
         case edit
     }
     
-    enum ViewType {
+    public enum ViewType {
         case eventList
         case eventDetail
+        case addEvent
+        case editEvent
     }
     
     var body: some View {
@@ -42,6 +44,24 @@ struct ContentView: View {
             // 事件详情视图
             if currentView == .eventDetail, let event = selectedEvent {
                 eventDetailView(event: event)
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .trailing).combined(with: .opacity)
+                    ))
+            }
+            
+            // 添加事件视图
+            if currentView == .addEvent {
+                addEventView
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .trailing).combined(with: .opacity)
+                    ))
+            }
+            
+            // 编辑事件视图
+            if currentView == .editEvent, let event = selectedEvent {
+                editEventView(event: event)
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal: .move(edge: .trailing).combined(with: .opacity)
@@ -114,8 +134,9 @@ struct ContentView: View {
                 Spacer()
                 
                 Button {
-                    popoverType = .add
-                    showingPopover = true
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .addEvent
+                    }
                 } label: {
                     SFSymbolIcon(symbol: .plus, size: 22, color: .accentColor).themeAware()
                 }
@@ -212,8 +233,9 @@ struct ContentView: View {
                 Spacer()
                 
                 Button {
-                    popoverType = .edit
-                    showingPopover = true
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .editEvent
+                    }
                 } label: {
                     SFSymbolIcon(symbol: .pencil, size: 22, color: .accentColor).themeAware()
                 }
@@ -383,6 +405,90 @@ struct ContentView: View {
                 .padding()
             }
             .background(Color(NSColor.windowBackgroundColor))
+        }
+    }
+    
+    // 添加事件视图
+    private var addEventView: some View {
+        VStack(spacing: 0) {
+            // 顶部标题和返回按钮
+            HStack {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventList
+                    }
+                } label: {
+                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
+                }
+                .buttonStyle(.plain)
+                
+                Spacer()
+                
+                Text("添加事件")
+                    .font(.headline)
+                    .lineLimit(1)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Button {
+                    countdownStore.load()
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventList
+                    }
+                } label: {
+                    SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal)
+            .padding(.top, 16)
+            .padding(.bottom, 16)
+            .background(Color(NSColor.windowBackgroundColor))
+            
+            AddEventView(countdownStore: countdownStore)
+        }
+    }
+    
+    // 编辑事件视图
+    private func editEventView(event: CountdownEvent) -> some View {
+        VStack(spacing: 0) {
+            // 顶部标题和返回按钮
+            HStack {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventDetail
+                    }
+                } label: {
+                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
+                }
+                .buttonStyle(.plain)
+                
+                Spacer()
+                
+                Text("编辑事件")
+                    .font(.headline)
+                    .lineLimit(1)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                Button {
+                    countdownStore.load()
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventDetail
+                    }
+                } label: {
+                    SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal)
+            .padding(.top, 16)
+            .padding(.bottom, 16)
+            .background(Color(NSColor.windowBackgroundColor))
+            
+            EditEventView(countdownStore: countdownStore, event: event)
         }
     }
     

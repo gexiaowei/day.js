@@ -85,24 +85,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
     
     // 打开添加事件页面
     @objc func openAddEvent() {
-        // 创建一个新的CountdownStore实例
-        let countdownStore = CountdownStore()
-        
-        // 加载已有的数据
-        countdownStore.load()
-        
-        // 创建添加事件视图并应用主题感知修饰器
-        let addEventView = AddEventView(countdownStore: countdownStore).themeAware()
-        
-        // 创建弹出窗口
-        let addEventPopover = NSPopover()
-        addEventPopover.contentSize = NSSize(width: 350, height: 600)
-        addEventPopover.behavior = .transient
-        addEventPopover.contentViewController = NSHostingController(rootView: addEventView)
-        
-        // 显示弹出窗口
-        if let button = statusItem?.button {
-            addEventPopover.show(relativeTo: button.bounds, of: button, preferredEdge: .minX)
+        // 获取主界面的 ContentView 实例
+        if let contentViewController = popover?.contentViewController as? NSHostingController<ContentView> {
+            let contentView = contentViewController.rootView
+            
+            // 切换到添加事件视图
+            withAnimation(.easeInOut(duration: 0.3)) {
+                contentView.currentView = .addEvent
+            }
+            
+            // 显示 popover
+            if let button = statusItem?.button {
+                popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            }
         }
     }
     
