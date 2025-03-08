@@ -43,6 +43,7 @@ struct EditEventView: View {
             leftButton: ("trash", { showDeleteAlert = true }),
             rightButton: ("checkmark.circle.fill", saveEvent)
         )
+        .frame(width: 350)
         .alert("确认删除", isPresented: $showDeleteAlert) {
             Button("取消", role: .cancel) { }
             Button("删除", role: .destructive) {

@@ -28,6 +28,7 @@ struct AddEventView: View {
             leftButton: ("xmark.circle.fill", dismiss.callAsFunction),
             rightButton: ("checkmark.circle.fill", saveEvent)
         )
+        .frame(width: 350)
     }
     
     // MARK: - Helper Methods

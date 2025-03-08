@@ -19,116 +19,105 @@ struct EventFormView: View {
     let rightButton: (String, () -> Void)
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 20) {
-                    eventInfoSection
-                    imageSection
-                    colorSection
-                    noteSection
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                // Title
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("标题")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    TextField("输入事件标题", text: $title)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 300)
                 }
-                .padding(.vertical)
-            }
-            .background(Color(NSColor.windowBackgroundColor))
-        }
-    }
-    
-    // MARK: - Event Info Section
-    private var eventInfoSection: some View {
-        GroupBox(label: 
-            Label("事件信息", systemImage: "info.circle")
-                .font(.headline)
-        ) {
-            VStack(spacing: 16) {
-                titleInputView
-                calendarTypeView
-                datePickerView
-                repeatCycleView
-            }
-            .padding()
-        }
-        .padding(.horizontal)
-    }
-    
-    private var titleInputView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("标题")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            TextField("输入事件标题", text: $title)
-                .textFieldStyle(.roundedBorder)
-                .padding(.horizontal, 4)
-        }
-    }
-    
-    private var calendarTypeView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("日历类型")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Picker("日历类型", selection: $selectedCalendarType) {
-                ForEach(CalendarType.allCases, id: \.self) { type in
-                    Text(type.rawValue).tag(type)
+                
+                // Calendar Type
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("日历类型")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    Picker("", selection: $selectedCalendarType) {
+                        ForEach(CalendarType.allCases, id: \.self) { type in
+                            Text(type.rawValue).tag(type)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .frame(width: 300)
                 }
-            }
-            .pickerStyle(.segmented)
-        }
-    }
-    
-    private var datePickerView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("目标日期")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            DatePicker("选择日期", selection: $targetDate, displayedComponents: .date)
-                .datePickerStyle(.graphical)
-                .padding(8)
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(8)
-        }
-    }
-    
-    private var repeatCycleView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("重复周期")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            Picker("重复周期", selection: $selectedRepeatCycle) {
-                ForEach(RepeatCycle.allCases, id: \.self) { cycle in
-                    Label(
-                        title: { Text(cycle.rawValue) },
-                        icon: { Image(systemName: cycleIcon(for: cycle)) }
-                    )
-                    .tag(cycle)
+                
+                // Date Picker
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("目标日期")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    DatePicker("", selection: $targetDate, displayedComponents: .date)
+                        .datePickerStyle(.graphical)
+                        .frame(width: 300)
                 }
-            }
-            .pickerStyle(.menu)
-            .padding(8)
-            .background(Color(NSColor.controlBackgroundColor))
-            .cornerRadius(8)
-        }
-    }
-    
-    // MARK: - Image Section
-    private var imageSection: some View {
-        GroupBox(label: 
-            Label("图片", systemImage: "photo")
-                .font(.headline)
-        ) {
-            VStack {
-                if let imageData = imageData, let nsImage = NSImage(data: imageData) {
-                    imagePreviewView(nsImage: nsImage)
-                } else {
-                    imagePickerButton
+                
+                // Repeat Cycle
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("重复周期")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    Picker("", selection: $selectedRepeatCycle) {
+                        ForEach(RepeatCycle.allCases, id: \.self) { cycle in
+                            Label(
+                                title: { Text(cycle.rawValue) },
+                                icon: { Image(systemName: cycleIcon(for: cycle)) }
+                            )
+                            .tag(cycle)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .frame(width: 300)
+                }
+                
+                // Colors
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("颜色")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))], spacing: 12) {
+                        ForEach(colorOptions, id: \.self) { color in
+                            colorCircleView(for: color)
+                        }
+                    }
+                    .frame(width: 300)
+                }
+                
+                // Image
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("图片")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    if let imageData = imageData, let nsImage = NSImage(data: imageData) {
+                        imagePreviewView(nsImage: nsImage)
+                    } else {
+                        imagePickerButton
+                    }
+                }
+                
+                // Note
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("备注")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    
+                    TextEditor(text: $note)
+                        .frame(width: 300, height: 100)
+                        .background(Color(NSColor.controlBackgroundColor))
+                        .cornerRadius(8)
                 }
             }
             .padding()
         }
-        .padding(.horizontal)
+        .background(Color(NSColor.windowBackgroundColor))
     }
     
     private func imagePreviewView(nsImage: NSImage) -> some View {
@@ -136,8 +125,7 @@ struct EventFormView: View {
             Image(nsImage: nsImage)
                 .resizable()
                 .scaledToFill()
-                .frame(maxWidth: .infinity)
-                .frame(height: 200)
+                .frame(width: 300, height: 200)
                 .clipShape(RoundedRectangle(cornerRadius: 8))
                 .padding(.vertical, 5)
             
@@ -145,6 +133,7 @@ struct EventFormView: View {
                 self.imageData = nil
             }) {
                 Label("删除图片", systemImage: "trash")
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.white)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 8)
@@ -152,7 +141,6 @@ struct EventFormView: View {
                     .cornerRadius(8)
             }
             .buttonStyle(.plain)
-            .padding(.top, 8)
         }
     }
     
@@ -167,71 +155,32 @@ struct EventFormView: View {
                     .font(.headline)
                     .foregroundColor(.accentColor)
             }
-            .frame(maxWidth: .infinity)
-            .frame(height: 150)
+            .frame(width: 300, height: 150)
             .background(Color(NSColor.controlBackgroundColor))
             .cornerRadius(8)
         }
         .buttonStyle(.plain)
     }
     
-    // MARK: - Color Section
-    private var colorSection: some View {
-        GroupBox(label: 
-            Label("颜色", systemImage: "paintpalette")
-                .font(.headline)
-        ) {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 60))], spacing: 16) {
-                ForEach(colorOptions, id: \.self) { color in
-                    colorCircleView(for: color)
-                }
-            }
-            .padding()
-        }
-        .padding(.horizontal)
-    }
-    
     private func colorCircleView(for color: String) -> some View {
         ZStack {
             Circle()
                 .fill(Color(color))
-                .frame(width: 50, height: 50)
+                .frame(width: 30, height: 30)
             
             if color == selectedColor {
                 Circle()
                     .stroke(Color.white, lineWidth: 2)
-                    .frame(width: 54, height: 54)
+                    .frame(width: 34, height: 34)
                 
-                SFSymbolIcon(symbol: .check, size: 16, color: .white).themeAware()
+                SFSymbolIcon(symbol: .check, size: 12, color: .white).themeAware()
             }
         }
         .onTapGesture {
             selectedColor = color
         }
-        .padding(5)
     }
     
-    // MARK: - Note Section
-    private var noteSection: some View {
-        GroupBox(label: 
-            Label("备注", systemImage: "note.text")
-                .font(.headline)
-        ) {
-            TextEditor(text: $note)
-                .frame(minHeight: 120)
-                .padding(8)
-                .background(Color(NSColor.controlBackgroundColor))
-                .cornerRadius(8)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-                )
-                .padding()
-        }
-        .padding(.horizontal)
-    }
-    
-    // MARK: - Helper Methods
     private func openImagePicker() {
         let openPanel = NSOpenPanel()
         openPanel.allowsMultipleSelection = false
@@ -263,4 +212,4 @@ struct EventFormView: View {
             return "calendar.badge.clock"
         }
     }
-} 
+}
