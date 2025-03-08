@@ -54,7 +54,7 @@ struct EventFormView: View {
                         .foregroundColor(.secondary)
                     DatePicker("", selection: $targetDate, displayedComponents: .date)
                         .datePickerStyle(.graphical)
-                        .frame(width: 300)
+                        .frame(maxWidth: .infinity)
                 }
                 
                 // Repeat Cycle
