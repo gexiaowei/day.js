@@ -32,40 +32,30 @@ struct ContentView: View {
     
     var body: some View {
         ZStack {
-            // 事件列表视图
-            if currentView == .eventList {
-                eventListView
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .leading).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-            }
+            // 事件列表视图始终在最底层
+            eventListView
+                .zIndex(0)
             
             // 事件详情视图
-            if currentView == .eventDetail, let event = selectedEvent {
+            if let event = selectedEvent {
                 eventDetailView(event: event)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
+                    .opacity(currentView == .eventDetail ? 1 : 0)
+                    .offset(x: currentView == .eventDetail ? 0 : 500)
+                    .zIndex(currentView == .eventDetail ? 1 : 0)
             }
             
             // 添加事件视图
-            if currentView == .addEvent {
-                addEventView
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-            }
+            addEventView
+                .opacity(currentView == .addEvent ? 1 : 0)
+                .offset(x: currentView == .addEvent ? 0 : 500)
+                .zIndex(currentView == .addEvent ? 2 : 0)
             
             // 编辑事件视图
-            if currentView == .editEvent, let event = selectedEvent {
+            if let event = selectedEvent {
                 editEventView(event: event)
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
+                    .opacity(currentView == .editEvent ? 1 : 0)
+                    .offset(x: currentView == .editEvent ? 0 : 500)
+                    .zIndex(currentView == .editEvent ? 3 : 0)
             }
         }
         .animation(.easeInOut(duration: 0.3), value: currentView)
