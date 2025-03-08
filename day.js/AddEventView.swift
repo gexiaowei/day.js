@@ -15,47 +15,19 @@ struct AddEventView: View {
     @State private var imageData: Data?
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 标题栏
-            HStack {
-                Button(action: dismiss.callAsFunction) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
-                }
-                .buttonStyle(.plain)
-                .padding(.leading)
-                
-                Spacer()
-                
-                Text("添加事件")
-                    .font(.headline)
-                
-                Spacer()
-                
-                Button(action: saveEvent) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.accentColor)
-                }
-                .buttonStyle(.plain)
-                .padding(.trailing)
-            }
-            .padding(.vertical, 8)
-            .background(Color(NSColor.windowBackgroundColor))
-            
-            // 分隔线
-            Divider()
-            
-            EventFormView(
-                countdownStore: countdownStore,
-                title: $title,
-                targetDate: $targetDate,
-                selectedCalendarType: $selectedCalendarType,
-                selectedRepeatCycle: $selectedRepeatCycle,
-                selectedColor: $selectedColor,
-                note: $note,
-                imageData: $imageData
-            )
-        }
+        EventFormView(
+            countdownStore: countdownStore,
+            title: $title,
+            targetDate: $targetDate,
+            selectedCalendarType: $selectedCalendarType,
+            selectedRepeatCycle: $selectedRepeatCycle,
+            selectedColor: $selectedColor,
+            note: $note,
+            imageData: $imageData,
+            formTitle: "添加事件",
+            leftButton: ("xmark.circle.fill", dismiss.callAsFunction),
+            rightButton: ("checkmark.circle.fill", saveEvent)
+        )
     }
     
     // MARK: - Helper Methods

@@ -30,49 +30,19 @@ struct EditEventView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            // 标题栏
-            HStack {
-                Button(action: {
-                    showDeleteAlert = true
-                }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.red)
-                }
-                .buttonStyle(.plain)
-                .padding(.leading)
-                
-                Spacer()
-                
-                Text("编辑事件")
-                    .font(.headline)
-                
-                Spacer()
-                
-                Button(action: saveEvent) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundColor(.accentColor)
-                }
-                .buttonStyle(.plain)
-                .padding(.trailing)
-            }
-            .padding(.vertical, 8)
-            .background(Color(NSColor.windowBackgroundColor))
-            
-            // 分隔线
-            Divider()
-            
-            EventFormView(
-                countdownStore: countdownStore,
-                title: $title,
-                targetDate: $targetDate,
-                selectedCalendarType: $selectedCalendarType,
-                selectedRepeatCycle: $selectedRepeatCycle,
-                selectedColor: $selectedColor,
-                note: $note,
-                imageData: $imageData
-            )
-        }
+        EventFormView(
+            countdownStore: countdownStore,
+            title: $title,
+            targetDate: $targetDate,
+            selectedCalendarType: $selectedCalendarType,
+            selectedRepeatCycle: $selectedRepeatCycle,
+            selectedColor: $selectedColor,
+            note: $note,
+            imageData: $imageData,
+            formTitle: "编辑事件",
+            leftButton: ("trash", { showDeleteAlert = true }),
+            rightButton: ("checkmark.circle.fill", saveEvent)
+        )
         .alert("确认删除", isPresented: $showDeleteAlert) {
             Button("取消", role: .cancel) { }
             Button("删除", role: .destructive) {
