@@ -46,7 +46,7 @@ struct ContentView: View {
                 eventDetailView(event: event)
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
+                        removal: .move(edge: .leading).combined(with: .opacity)
                     ))
             }
             
@@ -55,7 +55,7 @@ struct ContentView: View {
                 addEventView
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
+                        removal: .move(edge: .leading).combined(with: .opacity)
                     ))
             }
             
@@ -64,7 +64,7 @@ struct ContentView: View {
                 editEventView(event: event)
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
+                        removal: .move(edge: .leading).combined(with: .opacity)
                     ))
             }
         }
