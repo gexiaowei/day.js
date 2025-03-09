@@ -5,8 +5,8 @@
 //  Created by 戈晓伟 on 2025/3/6.
 //
 
-import SwiftUI
 import AppKit
+import SwiftUI
 
 struct ContentView: View {
     @StateObject private var countdownStore = CountdownStore()
@@ -28,32 +28,32 @@ struct ContentView: View {
     }
     @State var popoverType: PopoverType = .add
     @State var currentView: ViewType = .eventList
-    
+
     public enum PopoverType {
         case add
         case detail
         case edit
     }
-    
+
     public enum ViewType {
         case eventList
         case eventDetail
         case addEvent
         case editEvent
     }
-    
+
     // 添加一个公共方法用于显示添加事件界面
     public func showAddEvent() {
         showingPopover = true
         popoverType = .add
     }
-    
+
     var body: some View {
         ZStack {
             // 事件列表视图始终在最底层
             eventListView
                 .zIndex(0)
-            
+
             // 事件详情视图
             if let event = selectedEvent {
                 eventDetailView(event: event)
@@ -61,7 +61,7 @@ struct ContentView: View {
                     .offset(x: currentView == .eventDetail ? 0 : 500)
                     .zIndex(currentView == .eventDetail ? 1 : 0)
             }
-            
+
             // 添加事件视图
             Group {
                 VStack(spacing: 0) {
@@ -75,19 +75,20 @@ struct ContentView: View {
                                 showingPopover = false
                             }
                         } label: {
-                            SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
+                            SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
+                                .themeAware()
                         }
                         .buttonStyle(.plain)
-                        
+
                         Spacer()
-                        
+
                         Text("添加事件")
                             .font(.headline)
                             .lineLimit(1)
                             .foregroundColor(.primary)
-                        
+
                         Spacer()
-                        
+
                         Button {
                             countdownStore.load()
                             withAnimation(.easeInOut(duration: 0.3)) {
@@ -105,22 +106,25 @@ struct ContentView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 16)
                     .background(Color(NSColor.windowBackgroundColor))
-                    
+
                     AddEventView(countdownStore: countdownStore)
                 }
+                .frame(maxWidth: .infinity)
                 .opacity(currentView == .addEvent ? 1 : 0)
                 .offset(x: currentView == .addEvent ? 0 : 500)
                 .zIndex(currentView == .addEvent ? 2 : 0)
             }
-            
+
             // 编辑事件视图
             if let event = selectedEvent {
                 editEventView(event: event)
+                    .frame(maxWidth: .infinity)
                     .opacity(currentView == .editEvent ? 1 : 0)
                     .offset(x: currentView == .editEvent ? 0 : 500)
                     .zIndex(currentView == .editEvent ? 3 : 0)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: 0.3), value: currentView)
         .popover(isPresented: $showingPopover, arrowEdge: .bottom) {
             VStack {
@@ -160,7 +164,7 @@ struct ContentView: View {
         .themeAware()
         .onAppear {
             countdownStore.load()
-            
+
             // 添加通知监听，当删除事件时返回到事件列表
             NotificationCenter.default.addObserver(
                 forName: NSNotification.Name("ReturnToEventList"),
@@ -178,20 +182,20 @@ struct ContentView: View {
             NotificationCenter.default.removeObserver(self)
         }
     }
-    
+
     // 事件列表视图
     private var eventListView: some View {
         VStack(spacing: 0) {
             // 顶部标题和添加按钮
             HStack {
                 Spacer()
-                
+
                 Text("DAY.JS")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 Button {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .addEvent
@@ -206,7 +210,7 @@ struct ContentView: View {
             .padding(.top, 16)
             .padding(.bottom, 16)
             .background(Color(NSColor.windowBackgroundColor))
-            
+
             // 主内容区域
             if countdownStore.events.isEmpty {
                 Spacer()
@@ -215,12 +219,12 @@ struct ContentView: View {
                         .font(.system(size: 70))
                         .symbolRenderingMode(.hierarchical)
                         .foregroundColor(.secondary)
-                    
+
                     Text("没有事件")
                         .font(.title2)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
-                    
+
                     Text("点击右上角的+按钮添加新的事件")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
@@ -251,7 +255,9 @@ struct ContentView: View {
                                 }
                                 .contextMenu {
                                     Button(action: {
-                                        if let index = countdownStore.events.firstIndex(where: { $0.id == event.id }) {
+                                        if let index = countdownStore.events.firstIndex(where: {
+                                            $0.id == event.id
+                                        }) {
                                             countdownStore.deleteEvent(at: IndexSet([index]))
                                         }
                                     }) {
@@ -266,8 +272,9 @@ struct ContentView: View {
                 .background(Color(NSColor.windowBackgroundColor))
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     // 事件详情视图
     private func eventDetailView(event: CountdownEvent) -> some View {
         VStack(spacing: 0) {
@@ -278,25 +285,36 @@ struct ContentView: View {
                         currentView = .eventList
                     }
                 } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
+                    SFSymbolIcon(symbol: .chevronLeft, size: 18, color: .accentColor).themeAware()
                 }
                 .buttonStyle(.plain)
-                
+
                 Spacer()
-                
+
                 Text(event.title)
+                    .font(.system(size: 20, weight: .bold))
                     .font(.headline)
                     .lineLimit(1)
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 Button {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .editEvent
                     }
                 } label: {
-                    SFSymbolIcon(symbol: .pencil, size: 22, color: .accentColor).themeAware()
+                    SFSymbolIcon(symbol: .wandAndStars, size: 20, color: .accentColor)
+                        .themeAware()
+                }
+                .buttonStyle(.plain)
+                Button {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .editEvent
+                    }
+                } label: {
+                    SFSymbolIcon(symbol: .squareAndArrowUp, size: 20, color: .accentColor)
+                        .themeAware()
                 }
                 .buttonStyle(.plain)
             }
@@ -304,169 +322,112 @@ struct ContentView: View {
             .padding(.top, 16)
             .padding(.bottom, 16)
             .background(Color(NSColor.windowBackgroundColor))
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
-                    // 倒计时显示
-                    HStack {
-                        Spacer()
-                        VStack(spacing: 8) {
-                            Text("\(abs(event.daysRemaining))")
-                                .font(.system(size: 80, weight: .bold))
-                                .foregroundColor(Color(event.color))
-                            
-                            Text(event.isPast ? "天前" : "天后")
-                                .font(.title3)
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    }
-                    .padding(.vertical, 24)
-                    
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .center, spacing: 16) {
+
+                    // .padding(.vertical, 24)
+
                     // 如果有图片，显示图片
-                    if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
-                        Image(nsImage: nsImage)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .padding(.horizontal)
+                    ZStack {
+                        Circle()
+                            .fill(Color(event.color))  // 使用 color 参数并设置透明度
+                            .frame(width: 210, height: 210)  // 圆形尺寸
+                            .opacity(0.38)
+                        Circle()
+                            .fill(Color(event.color))  // 使用 color 参数并设置透明度
+                            .frame(width: 190, height: 190)  // 圆形尺寸
+                            .opacity(0.62)
+                        if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
+                            Image(nsImage: nsImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                                .padding(.horizontal)
+                        } else {
+                            SFSymbolIcon(symbol: .image, size: 100, color: .secondary)
+                                .frame(width: 170, height: 170)
+                                .background(.white)
+                                .clipShape(Circle())
+                                .padding(.horizontal)
+                                // 使用 .foregroundColor 来设置颜色
+
+
+                        }
+
                     }
-                    
+
                     // 事件信息
-                    VStack(alignment: .leading, spacing: 20) {
-                        Group {
-                            HStack(alignment: .top) {
-                                SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
-                                    .frame(width: 24)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("日历类型")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    Text(event.calendarType.rawValue)
-                                        .font(.body)
-                                        .foregroundColor(.primary)
-                                }
-                            }
-                            
-                            HStack(alignment: .top) {
-                                SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
-                                    .frame(width: 24)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("日期")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    if event.calendarType == .lunar {
-                                        Text(formattedLunarDate(event.targetDate))
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                    } else {
-                                        Text(formattedDate(event.targetDate))
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                    }
-                                }
-                            }
-                            
-                            // 如果是农历，显示对应的公历日期
+                    VStack(alignment: .center, spacing: 20) {
+
+                        HStack(alignment: .top) {
+
+                            Text(event.repeatCycle.rawValue)
+                                .font(.body)
+                                .foregroundColor(.primary)
+                            Text(event.calendarType.rawValue)
+                                .font(.body)
+                                .foregroundColor(.primary)
                             if event.calendarType == .lunar {
-                                HStack(alignment: .top) {
-                                    SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
-                                        .frame(width: 24)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("公历日期")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                        
-                                        Text(formattedDate(event.targetDate))
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                    }
-                                }
-                            }
-                            
-                            HStack(alignment: .top) {
-                                SFSymbolIcon(symbol: .repeatIcon, size: 24, color: .secondary).themeAware()
-                                    .frame(width: 24)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("重复周期")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    Text(event.repeatCycle.rawValue)
-                                        .font(.body)
-                                        .foregroundColor(.primary)
-                                }
-                            }
-                            
-                            if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
-                                HStack(alignment: .top) {
-                                    SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
-                                        .frame(width: 24)
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("下次日期")
-                                            .font(.subheadline)
-                                            .foregroundColor(.secondary)
-                                        
-                                        Text(formattedDate(nextDate))
-                                            .font(.body)
-                                            .foregroundColor(.primary)
-                                    }
-                                }
-                                
-                                // 如果是农历，显示下次日期的农历表示
-                                if event.calendarType == .lunar {
-                                    HStack(alignment: .top) {
-                                        SFSymbolIcon(symbol: .calendar, size: 24, color: .secondary).themeAware()
-                                            .frame(width: 24)
-                                        
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text("下次农历")
-                                                .font(.subheadline)
-                                                .foregroundColor(.secondary)
-                                            
-                                            Text(formattedLunarDate(nextDate))
-                                                .font(.body)
-                                                .foregroundColor(.primary)
-                                        }
-                                    }
-                                }
+                                Text(formattedLunarDate(event.targetDate))
+                                    .font(.body)
+                                    .foregroundColor(.primary)
+                            } else {
+                                Text(formattedDate(event.targetDate))
+                                    .font(.body)
+                                    .foregroundColor(.primary)
                             }
                         }
-                        
-                        if !event.note.isEmpty {
+
+                        if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
                             HStack(alignment: .top) {
-                                SFSymbolIcon(symbol: .note, size: 24, color: .secondary).themeAware()
-                                    .frame(width: 24)
-                                
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("备注")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    Text(event.note)
-                                        .font(.body)
-                                        .foregroundColor(.primary)
-                                }
+                                Text("下次日期")
+                                    .font(.body)
+                                    .foregroundColor(.secondary)
+
+                                Text(formattedDate(nextDate))
+                                    .font(.body)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.primary)
                             }
+                        }
+
+                        VStack(alignment: .center, spacing: 0) {
+                            Path { path in
+                                path.move(to: CGPoint(x: 0, y: 10))
+                                path.addLine(to: CGPoint(x: 10, y: 0))
+                                path.addLine(to: CGPoint(x: 20, y: 10))
+                                path.closeSubpath()
+                            }
+                            .fill(Color(event.color).opacity(0.62))
+                            .frame(width: 20, height: 10)
+
+                            Text("\(event.isPast ? "已过去" : "还有") \(abs(event.daysRemaining)) 天")
+                                .font(.system(size: 24, weight: .medium))
+                                .foregroundColor(.white)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .frame(width: 300)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(event.color).opacity(0.62))
+                                )
+                                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
                         }
                     }
                     .padding(.horizontal)
+
+                    // 倒计时显示
+
                 }
                 .padding()
             }
             .background(Color(NSColor.windowBackgroundColor))
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     // 编辑事件视图
     private func editEventView(event: CountdownEvent) -> some View {
         VStack(spacing: 0) {
@@ -483,16 +444,16 @@ struct ContentView: View {
                     SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
                 }
                 .buttonStyle(.plain)
-                
+
                 Spacer()
-                
+
                 Text("编辑事件1")
                     .font(.headline)
                     .lineLimit(1)
                     .foregroundColor(.primary)
-                
+
                 Spacer()
-                
+
                 Button {
                     countdownStore.load()
                     withAnimation(.easeInOut(duration: 0.3)) {
@@ -510,21 +471,22 @@ struct ContentView: View {
             .padding(.top, 16)
             .padding(.bottom, 16)
             .background(Color(NSColor.windowBackgroundColor))
-            
+
             EditEventView(countdownStore: countdownStore, event: event)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    
+
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy年MM月dd日"
         return formatter.string(from: date)
     }
-    
+
     private func formattedLunarDate(_ date: Date) -> String {
         return LunarDateConverter.formatLunarDate(from: date)
     }
-    
+
     private func deleteEvents(at offsets: IndexSet) {
         countdownStore.deleteEvent(at: offsets)
     }
