@@ -184,8 +184,10 @@ struct ContentView: View {
         VStack(spacing: 0) {
             // 顶部标题和添加按钮
             HStack {
-                Text("倒计时")
-                    .font(.system(size: 28, weight: .bold))
+                Spacer()
+                
+                Text("DAY.JS")
+                    .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.primary)
                 
                 Spacer()
@@ -195,7 +197,7 @@ struct ContentView: View {
                         currentView = .addEvent
                     }
                 } label: {
-                    SFSymbolIcon(symbol: .plus, size: 22, color: .accentColor).themeAware()
+                    SFSymbolIcon(symbol: .plus, size: 18, color: .accentColor).themeAware()
                 }
                 .id("addButton")
                 .buttonStyle(.plain)
@@ -214,12 +216,12 @@ struct ContentView: View {
                         .symbolRenderingMode(.hierarchical)
                         .foregroundColor(.secondary)
                     
-                    Text("没有倒计时事件")
+                    Text("没有事件")
                         .font(.title2)
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                     
-                    Text("点击右上角的+按钮添加新的倒计时事件")
+                    Text("点击右上角的+按钮添加新的事件")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
