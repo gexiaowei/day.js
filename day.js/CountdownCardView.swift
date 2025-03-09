@@ -1,102 +1,107 @@
-import SwiftUI
 import AppKit
+import Foundation
+import RegexBuilder
+import SwiftUI
 
 struct CountdownCardView: View {
     let event: CountdownEvent
-    
+    @State private var isHovering = false
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(event.title)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                    
-                    Text(formattedDate(event.targetDate))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                ZStack {
-                    Circle()
-                        .fill(Color(event.color).opacity(0.2))
-                        .frame(width: 36, height: 36)
-                    
-                    Text("\(abs(event.daysRemaining))")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundColor(Color(event.color))
-                }
-            }
-            
-            if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
-                Image(nsImage: nsImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(height: 120)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            } else if event.repeatCycle != .none {
-                // 如果没有图片但有重复周期，显示图标
-                HStack {
-                    Spacer()
-                    
-                    Image(systemName: cycleIcon(for: event.repeatCycle))
-                        .font(.system(size: 40))
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundColor(Color(event.color))
-                    
-                    Spacer()
-                }
-                .padding(.vertical, 8)
-            }
-            
-            HStack {
-                Label {
-                    Text(event.calendarType.rawValue)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                } icon: {
-                    Image(systemName: "calendar")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-                
-                Spacer()
-                
-                if event.repeatCycle != .none {
-                    Label {
+        HStack(spacing: 12) {
+            // 左侧图标
+            Image(systemName: "gift.circle.fill")
+                .font(.system(size: 24))
+                .foregroundColor(.white)
+                .frame(width: 36, height: 36)
+                .background(Color(event.color))
+                .clipShape(Circle())
+
+            // 中间标题和日期
+            VStack(alignment: .leading, spacing: 4) {
+                Text(event.title)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundColor(.primary)
+                HStack(spacing: 4) {
+                    if event.repeatCycle != .none {
                         Text(event.repeatCycle.rawValue)
-                            .font(.caption)
+                            .font(.system(size: 12))
                             .foregroundColor(.secondary)
-                    } icon: {
-                        Image(systemName: cycleIcon(for: event.repeatCycle))
-                            .font(.caption)
+                        Text("·")
+                            .font(.system(size: 12))
                             .foregroundColor(.secondary)
+                    }
+
+                    Text(
+                        event.calendarType == .lunar
+                            ? formattedLunarDate(event.targetDate, repeatCycle: event.repeatCycle)
+                            : formattedDate(event.targetDate, repeatCycle: event.repeatCycle)
+                    )
+                    .font(.system(size: 12))
+                    .foregroundColor(.secondary)
+                }
+
+                if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
+                    HStack(spacing: 4) {
+                        Text("下一个.")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                        Text(
+                            formattedDate(nextDate, repeatCycle: .none)
+                        )
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                     }
                 }
             }
+            Spacer()
+
+            // 右侧天数
+            VStack(alignment: .trailing) {
+                Text("\(abs(event.daysRemaining))天")
+                    .font(.system(size: isHovering ? 22 : 18, weight: .medium))
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.trailing)
+                Text(event.daysRemaining < 0 ? "过期" : "剩余")
+                    .font(.system(size: 12))
+                    .multilineTextAlignment(.trailing)
+            }
         }
-        .padding(16)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .cornerRadius(4)
+        .onHover { hovering in
+            isHovering = hovering
+        }
     }
-    
-    private func formattedDate(_ date: Date) -> String {
+
+    private func formattedDate(_ date: Date, repeatCycle: RepeatCycle) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy年MM月dd日"
+        switch repeatCycle {
+        case .yearly:
+            formatter.dateFormat = "MM月dd日"
+        case .monthly:
+            formatter.dateFormat = "dd日"
+        default:
+            formatter.dateFormat = "yyyy年MM月dd日"
+        }
         return formatter.string(from: date)
     }
-    
-    private func cycleIcon(for cycle: RepeatCycle) -> String {
-        switch cycle {
-        case .none:
-            return "xmark.circle"
-        case .daily:
-            return "clock"
-        case .monthly:
-            return "calendar"
+
+    private func formattedLunarDate(_ date: Date, repeatCycle: RepeatCycle) -> String {
+        let lunarString = LunarDateConverter.formatLunarDate(from: date)
+        switch repeatCycle {
         case .yearly:
-            return "calendar.badge.clock"
+            if let regex = try? Regex("[0-9]+年") {
+                return lunarString.replacing(regex, with: "")
+            }
+            return lunarString
+        case .monthly:
+            let components = lunarString.components(separatedBy: "月")
+            guard components.count > 1 else { return lunarString }
+            return components[1]
+        default:
+            return lunarString
         }
     }
-} 
+}
