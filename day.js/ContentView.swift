@@ -13,19 +13,7 @@ struct ContentView: View {
     @State private var showingAddEvent = false
     @State private var showingEventDetail = false
     @State private var selectedEvent: CountdownEvent? = nil
-    @State var showingPopover: Bool = false {
-        didSet {
-            if !showingPopover {
-                // 当 popover 关闭时重新加载数据
-                countdownStore.load()
-                // 重置当前视图状态
-                currentView = .eventList
-            } else if popoverType == .add {
-                // 当显示 popover 且类型为 add 时，设置当前视图为添加事件
-                currentView = .addEvent
-            }
-        }
-    }
+
     @State var popoverType: PopoverType = .add
     @State var currentView: ViewType = .eventList
 
@@ -40,12 +28,6 @@ struct ContentView: View {
         case eventDetail
         case addEvent
         case editEvent
-    }
-
-    // 添加一个公共方法用于显示添加事件界面
-    public func showAddEvent() {
-        showingPopover = true
-        popoverType = .add
     }
 
     var body: some View {
@@ -71,9 +53,7 @@ struct ContentView: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 currentView = .eventList
                             }
-                            if showingPopover {
-                                showingPopover = false
-                            }
+
                         } label: {
                             SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
                                 .themeAware()
@@ -83,6 +63,7 @@ struct ContentView: View {
                         Spacer()
 
                         Text("添加事件")
+                            .font(.system(size: 20, weight: .bold))
                             .font(.headline)
                             .lineLimit(1)
                             .foregroundColor(.primary)
@@ -94,11 +75,10 @@ struct ContentView: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 currentView = .eventList
                             }
-                            if showingPopover {
-                                showingPopover = false
-                            }
+
                         } label: {
-                            SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
+                            Text("保存")
+                                .font(.system(size: 16))
                         }
                         .buttonStyle(.plain)
                     }
@@ -126,41 +106,6 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: 0.3), value: currentView)
-        .popover(isPresented: $showingPopover, arrowEdge: .bottom) {
-            VStack {
-                if popoverType == .add {
-                    VStack(spacing: 0) {
-                        AddEventView(countdownStore: countdownStore)
-                    }
-                    .frame(width: 300, height: 500)
-                    .onDisappear {
-                        // 在添加页面关闭后重新加载数据
-                        countdownStore.load()
-                    }
-                } else if let event = selectedEvent {
-                    if popoverType == .detail {
-                        EventDetailView(countdownStore: countdownStore, event: event)
-                            .frame(width: 300, height: 500)
-                            .onDisappear {
-                                // 在详情页关闭后重新加载数据
-                                countdownStore.load()
-                            }
-                    } else if popoverType == .edit {
-                        VStack(spacing: 0) {
-                            EditEventView(countdownStore: countdownStore, event: event)
-                        }
-                        .frame(width: 300, height: 600)
-                        .onDisappear {
-                            // 在编辑页面关闭后重新加载数据
-                            countdownStore.load()
-                        }
-                    }
-                }
-            }
-            .animation(.easeInOut(duration: 0.2), value: popoverType)
-            .presentationCompactAdaptation(.popover)
-            .themeAware()
-        }
         .themeAware()
         .onAppear {
             countdownStore.load()
@@ -173,19 +118,6 @@ struct ContentView: View {
             ) { _ in
                 withAnimation(.easeInOut(duration: 0.3)) {
                     currentView = .eventList
-                    showingPopover = false
-                }
-            }
-
-            // 添加通知监听，当选择图片后重新显示 popover
-            NotificationCenter.default.addObserver(
-                forName: NSNotification.Name("didSelectImageNotification"),
-                object: nil,
-                queue: .main
-            ) { _ in
-                print("收到图片选择通知，重新显示popover")
-                withAnimation(.easeInOut(duration: 0.3)) {
-                    showingPopover = true
                 }
             }
         }
@@ -351,9 +283,7 @@ struct ContentView: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
                     }
-                    if showingPopover {
-                        showingPopover = false
-                    }
+
                 } label: {
                     SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
                 }
@@ -374,9 +304,7 @@ struct ContentView: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
                     }
-                    if showingPopover {
-                        showingPopover = false
-                    }
+
                 } label: {
                     Text("保存")
                         .font(.system(size: 16))
