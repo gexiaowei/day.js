@@ -190,7 +190,7 @@ struct ContentView: View {
             HStack {
                 Spacer()
 
-                Text("DAY.JS")
+                Text("DAY✦")
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(.primary)
 
@@ -242,7 +242,7 @@ struct ContentView: View {
                                         .fill(Color(NSColor.windowBackgroundColor))
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
+                                    RoundedRectangle(cornerRadius: 4)
                                         .stroke(Color(event.color).opacity(0.2), lineWidth: 1)
                                 )
                                 .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
@@ -279,7 +279,7 @@ struct ContentView: View {
     private func eventDetailView(event: CountdownEvent) -> some View {
         VStack(spacing: 0) {
             // 顶部标题和返回按钮
-            HStack {
+            HStack(alignment: .center) {
                 Button {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventList
@@ -299,129 +299,33 @@ struct ContentView: View {
 
                 Spacer()
 
-                Button {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .editEvent
+                HStack(alignment: .bottom, spacing: 8) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentView = .editEvent
+                        }
+                    } label: {
+                        Text("编辑")
+                            .font(.system(size: 16))
                     }
-                } label: {
-                    SFSymbolIcon(symbol: .wandAndStars, size: 20, color: .accentColor)
-                        .themeAware()
-                }
-                .buttonStyle(.plain)
-                Button {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .editEvent
+                    .buttonStyle(.plain)
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentView = .editEvent
+                        }
+                    } label: {
+                        SFSymbolIcon(symbol: .squareAndArrowUp, size: 20, color: .accentColor)
+                            .themeAware()
                     }
-                } label: {
-                    SFSymbolIcon(symbol: .squareAndArrowUp, size: 20, color: .accentColor)
-                        .themeAware()
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 16)
             .background(Color(NSColor.windowBackgroundColor))
 
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .center, spacing: 16) {
-
-                    // .padding(.vertical, 24)
-
-                    // 如果有图片，显示图片
-                    ZStack {
-                        Circle()
-                            .fill(Color(event.color))  // 使用 color 参数并设置透明度
-                            .frame(width: 210, height: 210)  // 圆形尺寸
-                            .opacity(0.38)
-                        Circle()
-                            .fill(Color(event.color))  // 使用 color 参数并设置透明度
-                            .frame(width: 190, height: 190)  // 圆形尺寸
-                            .opacity(0.62)
-                        if let imageData = event.imageData, let nsImage = NSImage(data: imageData) {
-                            Image(nsImage: nsImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 180, height: 180)
-                                .clipShape(Circle())
-                                .padding(.horizontal)
-                        } else {
-                            SFSymbolIcon(symbol: .image, size: 100, color: .secondary)
-                                .frame(width: 170, height: 170)
-                                .background(.white)
-                                .clipShape(Circle())
-                                .padding(.horizontal)
-                            // 使用 .foregroundColor 来设置颜色
-
-                        }
-
-                    }
-
-                    // 事件信息
-                    VStack(alignment: .center, spacing: 20) {
-
-                        HStack(alignment: .top, spacing: 2) {
-                            Text(event.repeatCycle.rawValue)
-                                .font(.body)
-                                .foregroundColor(.primary)
-                            Text(event.calendarType.rawValue)
-                                .font(.body)
-                                .foregroundColor(.primary)
-                            if event.calendarType == .lunar {
-                                Text(DateFormatUtils.formattedLunarDate(event.targetDate))
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                            } else {
-                                Text(DateFormatUtils.formattedDate(event.targetDate))
-                                    .font(.body)
-                                    .foregroundColor(.primary)
-                            }
-                        }
-
-                        if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
-                            HStack(alignment: .top) {
-                                Text("下次日期")
-                                    .font(.body)
-                                    .foregroundColor(.secondary)
-
-                                Text(DateFormatUtils.formattedDate(nextDate))
-                                    .font(.body)
-                                    .fontWeight(.medium)
-                                    .foregroundColor(.primary)
-                            }
-                        }
-
-                        VStack(alignment: .center, spacing: 0) {
-                            Path { path in
-                                path.move(to: CGPoint(x: 0, y: 10))
-                                path.addLine(to: CGPoint(x: 10, y: 0))
-                                path.addLine(to: CGPoint(x: 20, y: 10))
-                                path.closeSubpath()
-                            }
-                            .fill(Color(event.color).opacity(0.62))
-                            .frame(width: 20, height: 10)
-
-                            Text("\(event.isPast ? "已过去" : "还有") \(abs(event.daysRemaining)) 天")
-                                .font(.system(size: 24, weight: .medium))
-                                .foregroundColor(.white)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 16)
-                                .frame(width: 300)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color(event.color).opacity(0.62))
-                                )
-                                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-                        }
-                    }
-                    .padding(.horizontal)
-
-                    // 倒计时显示
-
-                }
-                .padding()
-            }
-            .background(Color(NSColor.windowBackgroundColor))
+            EventDetailView(countdownStore: countdownStore, event: event)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -445,7 +349,8 @@ struct ContentView: View {
 
                 Spacer()
 
-                Text("编辑事件1")
+                Text(event.title)
+                    .font(.system(size: 20, weight: .bold))
                     .font(.headline)
                     .lineLimit(1)
                     .foregroundColor(.primary)
@@ -461,7 +366,8 @@ struct ContentView: View {
                         showingPopover = false
                     }
                 } label: {
-                    SFSymbolIcon(symbol: .checkCircle, size: 22, color: .green).themeAware()
+                    Text("保存")
+                        .font(.system(size: 16))
                 }
                 .buttonStyle(.plain)
             }

@@ -12,14 +12,14 @@ struct CountdownCardView: View {
             // 左侧图标
             Group {
                 if let imageData = event.imageData,
-                   let nsImage = NSImage(data: imageData) {
+                    let nsImage = NSImage(data: imageData)
+                {
                     Image(nsImage: nsImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 48, height: 48)
                         .background(Color(event.color))
                         .clipShape(Circle())
-                        
 
                 } else {
                     Image(systemName: "gift.circle.fill")
@@ -59,9 +59,6 @@ struct CountdownCardView: View {
 
                 if event.repeatCycle != .none, let nextDate = event.nextOccurrence() {
                     HStack(spacing: 4) {
-                        Text("下一个.")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
                         Text(
                             DateFormatUtils.formattedDate(nextDate, repeatCycle: .none)
                         )
@@ -75,7 +72,7 @@ struct CountdownCardView: View {
             // 右侧天数
             VStack(alignment: .trailing) {
                 Text("\(abs(event.daysRemaining))天")
-                    .font(.system(size: isHovering ? 22 : 18, weight: .medium))
+                    .font(.system(size: 22, weight: .medium))
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.trailing)
                 Text(event.daysRemaining < 0 ? "过期" : "剩余")
@@ -85,10 +82,21 @@ struct CountdownCardView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .cornerRadius(0)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color(NSColor.windowBackgroundColor).opacity(isHovering ? 0.8 : 1.0))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 4)
+                        .stroke(
+                            isHovering ? Color(event.color).opacity(0.3) : Color.clear, lineWidth: 1
+                        )
+                )
+        )
+        .shadow(color: .black.opacity(isHovering ? 0.1 : 0.05), radius: 5, x: 0, y: 2)
         .onHover { hovering in
-            isHovering = hovering
+            withAnimation(.easeInOut(duration: 0.15)) {
+                isHovering = hovering
+            }
         }
     }
-
 }
