@@ -106,10 +106,6 @@ public class LunarDateConverter {
         let nextLunarDay = lunarComponents.day
 
         switch repeatCycle {
-        case .daily:
-            // 每天重复，直接返回明天
-            return gregorianCalendar.date(byAdding: .day, value: 1, to: currentDate)
-
         case .monthly:
             // 每月重复，农历月份加1
             nextLunarMonth += 1

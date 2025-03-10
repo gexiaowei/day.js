@@ -8,7 +8,6 @@ public enum CalendarType: String, Codable, CaseIterable {
 
 public enum RepeatCycle: String, Codable, CaseIterable {
     case none = "不重复"
-    case daily = "每天"
     case monthly = "每月"
     case yearly = "每年"
 }
@@ -82,10 +81,6 @@ public struct CountdownEvent: Identifiable, Codable {
         var nextComponents = DateComponents()
 
         switch repeatCycle {
-        case .daily:
-            // 如果是每天重复，返回明天的相同时间
-            return calendar.date(byAdding: .day, value: 1, to: date)
-
         case .monthly:
             // 如果是每月重复，返回下个月的相同日期
             // 首先检查目标日期是否已经过去
