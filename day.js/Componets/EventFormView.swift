@@ -24,12 +24,12 @@ struct EventFormView: View {
                 // 图片
                 ZStack {
                     Circle()
-                        .fill(Color(selectedColor))  // 使用 color 参数并设置透明度
-                        .frame(width: 160, height: 160)  // 圆形尺寸
+                        .fill(Color(selectedColor))
+                        .frame(width: 160, height: 160)
                         .opacity(0.38)
                     Circle()
-                        .fill(Color(selectedColor))  // 使用 color 参数并设置透明度
-                        .frame(width: 145, height: 145)  // 圆形尺寸
+                        .fill(Color(selectedColor))
+                        .frame(width: 145, height: 145)
                         .opacity(0.62)
                     if let imageData = imageData, let nsImage = NSImage(data: imageData) {
                         Image(nsImage: nsImage)
@@ -41,14 +41,15 @@ struct EventFormView: View {
                                 openImagePicker()
                             }
                     } else {
-                         Image(systemName: "gift")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.secondary)
-                        .onTapGesture {
-                            openImagePicker()
-                        }
+                        Image(systemName: "gift")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 60, height: 60)
+                            .foregroundColor(.secondary)
+                            .onTapGesture {
+                                openImagePicker()
+                            }
+                    }
                 }
 
                 // 标题
@@ -56,8 +57,8 @@ struct EventFormView: View {
                     .textFieldStyle(.roundedBorder)
                     .font(.system(size: 18))
                     .frame(maxWidth: .infinity)
-                // 重复周期
 
+                // 重复周期
                 HStack {
                     Text("重复周期")
                     Spacer()
@@ -73,6 +74,7 @@ struct EventFormView: View {
                     .pickerStyle(.menu)
                     .frame(width: 100)
                 }
+
                 // 日历类型
                 HStack {
                     Text("日历类型")
@@ -113,7 +115,6 @@ struct EventFormView: View {
                         }
                     }.frame(width: 200)
                 }
-
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 16)
