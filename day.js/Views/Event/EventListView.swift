@@ -11,9 +11,10 @@ struct EventListView: View {
             HStack {
                 Spacer()
 
-                Text("DAY✦")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.primary)
+                Image("TitleBarIcon")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 80, height: 24)
 
                 Spacer()
 

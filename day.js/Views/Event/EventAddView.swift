@@ -11,7 +11,7 @@ struct EventAddView: View {
     @State private var targetDate: Date = Date()
     @State private var selectedCalendarType: CalendarType = .gregorian
     @State private var selectedRepeatCycle: RepeatCycle = .none
-    @State private var color: String = "blue"
+    @State private var color: String = "SORA"
     @State private var imageData: Data?
     @State private var showingImagePicker = false
 
@@ -105,7 +105,7 @@ struct EventAddView: View {
         targetDate = Date()
         selectedCalendarType = .gregorian
         selectedRepeatCycle = .none
-        color = "blue"
+        color = "SORA"
         imageData = nil
     }
 }
