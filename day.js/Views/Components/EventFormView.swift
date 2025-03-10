@@ -13,7 +13,7 @@ struct EventFormView: View {
     @Binding var selectedColor: String
     @Binding var imageData: Data?
 
-    let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
+    let colorOptions = ["SORA", "NAE", "NAKABENI", "KIKYO", "OHNI", "MOMO"]
 
     var body: some View {
         ScrollView {
