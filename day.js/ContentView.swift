@@ -351,8 +351,7 @@ struct ContentView: View {
                                 .background(.white)
                                 .clipShape(Circle())
                                 .padding(.horizontal)
-                                // 使用 .foregroundColor 来设置颜色
-
+                            // 使用 .foregroundColor 来设置颜色
 
                         }
 
@@ -370,11 +369,11 @@ struct ContentView: View {
                                 .font(.body)
                                 .foregroundColor(.primary)
                             if event.calendarType == .lunar {
-                                Text(formattedLunarDate(event.targetDate))
+                                Text(DateFormatUtils.formattedLunarDate(event.targetDate))
                                     .font(.body)
                                     .foregroundColor(.primary)
                             } else {
-                                Text(formattedDate(event.targetDate))
+                                Text(DateFormatUtils.formattedDate(event.targetDate))
                                     .font(.body)
                                     .foregroundColor(.primary)
                             }
@@ -386,7 +385,7 @@ struct ContentView: View {
                                     .font(.body)
                                     .foregroundColor(.secondary)
 
-                                Text(formattedDate(nextDate))
+                                Text(DateFormatUtils.formattedDate(nextDate))
                                     .font(.body)
                                     .fontWeight(.medium)
                                     .foregroundColor(.primary)
@@ -475,16 +474,6 @@ struct ContentView: View {
             EditEventView(countdownStore: countdownStore, event: event)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy年MM月dd日"
-        return formatter.string(from: date)
-    }
-
-    private func formattedLunarDate(_ date: Date) -> String {
-        return LunarDateConverter.formatLunarDate(from: date)
     }
 
     private func deleteEvents(at offsets: IndexSet) {
