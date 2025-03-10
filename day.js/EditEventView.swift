@@ -12,7 +12,6 @@ struct EditEventView: View {
     @State private var selectedCalendarType: CalendarType
     @State private var selectedRepeatCycle: RepeatCycle
     @State private var selectedColor: String
-    @State private var note: String
     @State private var imageData: Data?
     @State private var showDeleteAlert = false
     
@@ -25,7 +24,6 @@ struct EditEventView: View {
         _selectedCalendarType = State(initialValue: event.calendarType)
         _selectedRepeatCycle = State(initialValue: event.repeatCycle)
         _selectedColor = State(initialValue: event.color)
-        _note = State(initialValue: event.note)
         _imageData = State(initialValue: event.imageData)
     }
     
@@ -37,7 +35,6 @@ struct EditEventView: View {
             selectedCalendarType: $selectedCalendarType,
             selectedRepeatCycle: $selectedRepeatCycle,
             selectedColor: $selectedColor,
-            note: $note,
             imageData: $imageData,
             formTitle: "编辑事件",
             leftButton: ("trash", { showDeleteAlert = true }),
@@ -63,7 +60,6 @@ struct EditEventView: View {
             calendarType: selectedCalendarType,
             repeatCycle: selectedRepeatCycle,
             color: selectedColor,
-            note: note,
             imageData: imageData
         )
         countdownStore.updateEvent(updatedEvent)

@@ -11,7 +11,6 @@ struct AddEventView: View {
     @State private var selectedCalendarType = CalendarType.solar
     @State private var selectedRepeatCycle = RepeatCycle.none
     @State private var selectedColor = "blue"
-    @State private var note = ""
     @State private var imageData: Data?
     
     var body: some View {
@@ -22,7 +21,6 @@ struct AddEventView: View {
             selectedCalendarType: $selectedCalendarType,
             selectedRepeatCycle: $selectedRepeatCycle,
             selectedColor: $selectedColor,
-            note: $note,
             imageData: $imageData,
             formTitle: "添加事件",
             leftButton: ("xmark.circle.fill", dismiss.callAsFunction),
@@ -39,7 +37,6 @@ struct AddEventView: View {
             calendarType: selectedCalendarType,
             repeatCycle: selectedRepeatCycle,
             color: selectedColor,
-            note: note,
             imageData: imageData
         )
         countdownStore.addEvent(newEvent)

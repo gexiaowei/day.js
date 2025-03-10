@@ -10,9 +10,6 @@ struct EventDetailView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             VStack(alignment: .center, spacing: 16) {
-
-                // .padding(.vertical, 24)
-
                 // 如果有图片，显示图片
                 ZStack {
                     Circle()
@@ -36,24 +33,18 @@ struct EventDetailView: View {
                             .background(.white)
                             .clipShape(Circle())
                             .padding(.horizontal)
-                        // 使用 .foregroundColor 来设置颜色
-
                     }
-
                 }
 
                 // 事件信息
                 VStack(alignment: .center, spacing: 20) {
-
                     HStack(alignment: .center, spacing: 0) {
                         Text(event.repeatCycle.rawValue)
                             .font(.body)
                         Text("·")
                             .font(.body)
-
                         Text(event.calendarType.rawValue)
                             .font(.body)
-
                         Text("·")
                             .font(.body)
 
@@ -77,10 +68,8 @@ struct EventDetailView: View {
                             Text("下次日期")
                                 .font(.body)
                                 .foregroundColor(.secondary)
-
                             Text("·")
                                 .font(.body)
-
                             Text(DateFormatUtils.formattedDate(nextDate))
                                 .font(.body)
                                 .fontWeight(.medium)
@@ -112,14 +101,10 @@ struct EventDetailView: View {
                     }
                 }
                 .padding(.horizontal)
-
-                // 倒计时显示
-
             }
             .padding()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(NSColor.windowBackgroundColor))
     }
-
 }

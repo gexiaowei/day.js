@@ -13,7 +13,6 @@ struct EventFormView: View {
     @Binding var selectedCalendarType: CalendarType
     @Binding var selectedRepeatCycle: RepeatCycle
     @Binding var selectedColor: String
-    @Binding var note: String
     @Binding var imageData: Data?
 
     let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
@@ -122,19 +121,6 @@ struct EventFormView: View {
                         }
                     }
                     .frame(width: 220)
-                }
-
-                // 备注
-                HStack(alignment: .top, spacing: 16) {
-                    Text("备注")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
-                    TextEditor(text: $note)
-                        .frame(height: 100)
-                        .background(Color(NSColor.controlBackgroundColor))
-                        .cornerRadius(8)
                 }
             }
             .padding()

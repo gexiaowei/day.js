@@ -19,17 +19,16 @@ public struct CountdownEvent: Identifiable, Codable {
     public var calendarType: CalendarType
     public var repeatCycle: RepeatCycle
     public var color: String  // 存储颜色的字符串表示
-    public var note: String
     public var imageData: Data?  // 存储用户上传的图片数据
 
     // 编码和解码自定义图片数据
     enum CodingKeys: String, CodingKey {
-        case id, title, targetDate, calendarType, repeatCycle, color, note, imageData
+        case id, title, targetDate, calendarType, repeatCycle, color, imageData
     }
 
     public init(
         id: UUID = UUID(), title: String, targetDate: Date, calendarType: CalendarType,
-        repeatCycle: RepeatCycle, color: String, note: String, imageData: Data? = nil
+        repeatCycle: RepeatCycle, color: String, imageData: Data? = nil
     ) {
         self.id = id
         self.title = title
@@ -37,7 +36,6 @@ public struct CountdownEvent: Identifiable, Codable {
         self.calendarType = calendarType
         self.repeatCycle = repeatCycle
         self.color = color
-        self.note = note
         self.imageData = imageData
     }
 
