@@ -71,53 +71,23 @@ struct ContentView: View {
             }
 
             // 添加事件视图
-            Group {
-                VStack(spacing: 0) {
-                    // 顶部标题和返回按钮
-                    HStack {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                currentView = .eventList
-                            }
-                        } label: {
-                            SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
-                                .themeAware()
-                        }
-                        .buttonStyle(.plain)
-
-                        Spacer()
-
-                        Text("添加事件")
-                            .font(.system(size: 20, weight: .bold))
-                            .font(.headline)
-                            .lineLimit(1)
-                            .foregroundColor(.primary)
-
-                        Spacer()
-
-                        Button {
-                            countdownStore.load()
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                currentView = .eventList
-                            }
-                        } label: {
-                            Text("保存")
-                                .font(.system(size: 16))
-                        }
-                        .buttonStyle(.plain)
+            EventAddView(
+                countdownStore: countdownStore,
+                onBack: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventList
                     }
-                    .padding(.horizontal)
-                    .padding(.top, 16)
-                    .padding(.bottom, 16)
-                    .background(Color(NSColor.windowBackgroundColor))
-
-                    AddEventView(countdownStore: countdownStore)
+                },
+                onSave: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventList
+                    }
                 }
-                .frame(maxWidth: .infinity)
-                .opacity(currentView == .addEvent ? 1 : 0)
-                .offset(x: currentView == .addEvent ? 0 : 500)
-                .zIndex(currentView == .addEvent ? 2 : 0)
-            }
+            )
+            .frame(maxWidth: .infinity)
+            .opacity(currentView == .addEvent ? 1 : 0)
+            .offset(x: currentView == .addEvent ? 0 : 500)
+            .zIndex(currentView == .addEvent ? 2 : 0)
 
             // 编辑事件视图
             if let event = selectedEvent {

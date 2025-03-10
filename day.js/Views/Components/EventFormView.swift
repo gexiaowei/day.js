@@ -14,9 +14,6 @@ struct EventFormView: View {
     @Binding var imageData: Data?
 
     let colorOptions = ["blue", "green", "red", "purple", "orange", "pink"]
-    let formTitle: String
-    let leftButton: (String, () -> Void)?
-    let rightButton: (String, () -> Void)
 
     var body: some View {
         ScrollView {

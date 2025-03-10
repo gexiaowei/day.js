@@ -1,18 +1,18 @@
-import SwiftUI
-import PhotosUI
 import AppKit
+import PhotosUI
+import SwiftUI
 
 struct AddEventView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var countdownStore: CountdownStore
-    
+
     @State private var title = ""
     @State private var targetDate = Date()
-    @State private var selectedCalendarType = CalendarType.solar
+    @State private var selectedCalendarType = CalendarType.gregorian
     @State private var selectedRepeatCycle = RepeatCycle.none
     @State private var selectedColor = "blue"
     @State private var imageData: Data?
-    
+
     var body: some View {
         EventFormView(
             countdownStore: countdownStore,
@@ -21,14 +21,11 @@ struct AddEventView: View {
             selectedCalendarType: $selectedCalendarType,
             selectedRepeatCycle: $selectedRepeatCycle,
             selectedColor: $selectedColor,
-            imageData: $imageData,
-            formTitle: "添加事件",
-            leftButton: ("xmark.circle.fill", dismiss.callAsFunction),
-            rightButton: ("checkmark.circle.fill", saveEvent)
+            imageData: $imageData
         )
         .frame(width: 350)
     }
-    
+
     // MARK: - Helper Methods
     private func saveEvent() {
         let newEvent = CountdownEvent(
@@ -63,4 +60,4 @@ extension Color {
             self = .blue
         }
     }
-} 
+}

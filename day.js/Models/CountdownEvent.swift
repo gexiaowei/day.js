@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 public enum CalendarType: String, Codable, CaseIterable {
-    case solar = "公历"
+    case gregorian = "公历"
     case lunar = "农历"
 }
 

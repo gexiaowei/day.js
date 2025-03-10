@@ -32,7 +32,7 @@ public class LunarDateConverter {
     ///   - lunarMonth: 农历月
     ///   - lunarDay: 农历日
     /// - Returns: 公历日期
-    public static func solarDateFrom(lunarYear: Int, lunarMonth: Int, lunarDay: Int) -> Date? {
+    public static func gregorianDateFrom(lunarYear: Int, lunarMonth: Int, lunarDay: Int) -> Date? {
         // 首先获取公历年的第一天
         let gregorianCalendar = Calendar(identifier: .gregorian)
         var components = DateComponents()
@@ -123,7 +123,7 @@ public class LunarDateConverter {
             // 如果目标日期已过，则使用下一年
             if nextLunarYear < currentYear
                 || (nextLunarYear == currentYear
-                    && solarDateFrom(
+                    && gregorianDateFrom(
                         lunarYear: nextLunarYear, lunarMonth: nextLunarMonth, lunarDay: nextLunarDay
                     )! < currentDate)
             {
@@ -137,7 +137,7 @@ public class LunarDateConverter {
         }
 
         // 转换为公历日期
-        return solarDateFrom(
+        return gregorianDateFrom(
             lunarYear: nextLunarYear, lunarMonth: nextLunarMonth, lunarDay: nextLunarDay)
     }
 
