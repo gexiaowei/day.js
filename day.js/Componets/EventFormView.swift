@@ -22,13 +22,26 @@ struct EventFormView: View {
         ScrollView {
             VStack(alignment: .center, spacing: 20) {
                 // 图片
-                if let imageData = imageData, let nsImage = NSImage(data: imageData) {
-                    imagePreviewView(nsImage: nsImage)
-                        .onTapGesture {
-                            openImagePicker()
-                        }
-                } else {
-                    Image(systemName: "gift")
+                ZStack {
+                    Circle()
+                        .fill(Color(selectedColor))  // 使用 color 参数并设置透明度
+                        .frame(width: 160, height: 160)  // 圆形尺寸
+                        .opacity(0.38)
+                    Circle()
+                        .fill(Color(selectedColor))  // 使用 color 参数并设置透明度
+                        .frame(width: 145, height: 145)  // 圆形尺寸
+                        .opacity(0.62)
+                    if let imageData = imageData, let nsImage = NSImage(data: imageData) {
+                        Image(nsImage: nsImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 130, height: 130)
+                            .clipShape(Circle())
+                            .onTapGesture {
+                                openImagePicker()
+                            }
+                    } else {
+                         Image(systemName: "gift")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 60, height: 60)
