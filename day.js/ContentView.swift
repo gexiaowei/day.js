@@ -360,8 +360,7 @@ struct ContentView: View {
                     // 事件信息
                     VStack(alignment: .center, spacing: 20) {
 
-                        HStack(alignment: .top) {
-
+                        HStack(alignment: .top, spacing: 2) {
                             Text(event.repeatCycle.rawValue)
                                 .font(.body)
                                 .foregroundColor(.primary)

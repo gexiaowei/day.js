@@ -8,14 +8,28 @@ struct CountdownCardView: View {
     @State private var isHovering = false
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: 16) {
             // 左侧图标
-            Image(systemName: "gift.circle.fill")
-                .font(.system(size: 24))
-                .foregroundColor(.white)
-                .frame(width: 36, height: 36)
-                .background(Color(event.color))
-                .clipShape(Circle())
+            Group {
+                if let imageData = event.imageData,
+                   let nsImage = NSImage(data: imageData) {
+                    Image(nsImage: nsImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: 48, height: 48)
+                        .background(Color(event.color))
+                        .clipShape(Circle())
+                        
+
+                } else {
+                    Image(systemName: "gift.circle.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(.white)
+                        .frame(width: 48, height: 48)
+                        .background(Color(event.color))
+                        .clipShape(Circle())
+                }
+            }
 
             // 中间标题和日期
             VStack(alignment: .leading, spacing: 4) {
@@ -71,7 +85,7 @@ struct CountdownCardView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .cornerRadius(4)
+        .cornerRadius(0)
         .onHover { hovering in
             isHovering = hovering
         }
