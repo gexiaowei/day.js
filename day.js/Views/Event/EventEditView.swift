@@ -69,79 +69,15 @@ struct EventEditView: View {
             .padding(.bottom, 16)
             .background(Color(NSColor.windowBackgroundColor))
 
-            // 编辑表单
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 标题输入
-                    TextField("事件标题", text: $title)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal)
-
-                    // 日期选择器
-                    DatePicker("目标日期", selection: $targetDate, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
-                        .padding()
-                        .background(Color(NSColor.controlBackgroundColor))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-
-                    // 日历类型选择
-                    Picker("日历类型", selection: $selectedCalendarType) {
-                        ForEach(CalendarType.allCases, id: \.self) { type in
-                            Text(type.rawValue).tag(type)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
-
-                    // 重复周期选择
-                    Picker("重复周期", selection: $selectedRepeatCycle) {
-                        ForEach(RepeatCycle.allCases, id: \.self) { cycle in
-                            Text(cycle.rawValue).tag(cycle)
-                        }
-                    }
-                    .pickerStyle(.segmented)
-                    .padding(.horizontal)
-
-                    // 颜色选择
-                    HStack {
-                        Text("事件颜色")
-                        Spacer()
-                        ColorPicker(
-                            "",
-                            selection: Binding(
-                                get: { Color(hex: color) },
-                                set: { color = $0.toHex() ?? "blue" }
-                            ))
-                    }
-                    .padding(.horizontal)
-
-                    // 图片选择
-                    Button {
-                        showingImagePicker = true
-                    } label: {
-                        HStack {
-                            Text("选择图片")
-                            Spacer()
-                            if let imageData = imageData,
-                                let nsImage = NSImage(data: imageData)
-                            {
-                                Image(nsImage: nsImage)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 40, height: 40)
-                                    .cornerRadius(4)
-                            }
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .padding()
-                    .background(Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(8)
-                    .padding(.horizontal)
-                }
-                .padding(.vertical)
-            }
+            EventFormView(
+                countdownStore: countdownStore,
+                title: $title,
+                targetDate: $targetDate,
+                selectedCalendarType: $selectedCalendarType,
+                selectedRepeatCycle: $selectedRepeatCycle,
+                selectedColor: $color,
+                imageData: $imageData
+            )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .fileImporter(
