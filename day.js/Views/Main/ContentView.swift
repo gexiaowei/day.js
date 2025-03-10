@@ -51,7 +51,7 @@ struct ContentView: View {
 
             // 事件详情视图
             if let event = selectedEvent {
-                EventDetailContainerView(
+                EventDetailView(
                     countdownStore: countdownStore,
                     event: event,
                     onBack: {
