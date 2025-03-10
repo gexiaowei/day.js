@@ -121,11 +121,25 @@ struct ContentView: View {
 
             // 编辑事件视图
             if let event = selectedEvent {
-                editEventView(event: event)
-                    .frame(maxWidth: .infinity)
-                    .opacity(currentView == .editEvent ? 1 : 0)
-                    .offset(x: currentView == .editEvent ? 0 : 500)
-                    .zIndex(currentView == .editEvent ? 3 : 0)
+                EventEditView(
+                    countdownStore: countdownStore,
+                    event: event,
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentView = .eventDetail
+                        }
+                    },
+                    onSave: {
+                        countdownStore.load()
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentView = .eventDetail
+                        }
+                    }
+                )
+                .frame(maxWidth: .infinity)
+                .opacity(currentView == .editEvent ? 1 : 0)
+                .offset(x: currentView == .editEvent ? 0 : 500)
+                .zIndex(currentView == .editEvent ? 3 : 0)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -149,52 +163,6 @@ struct ContentView: View {
             // 移除通知监听
             NotificationCenter.default.removeObserver(self)
         }
-    }
-
-    // 编辑事件视图
-    private func editEventView(event: CountdownEvent) -> some View {
-        VStack(spacing: 0) {
-            // 顶部标题和返回按钮
-            HStack {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .eventDetail
-                    }
-                } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
-                        .themeAware()
-                }
-                .buttonStyle(.plain)
-
-                Spacer()
-
-                Text(event.title)
-                    .font(.system(size: 20, weight: .bold))
-                    .font(.headline)
-                    .lineLimit(1)
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                Button {
-                    countdownStore.load()
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .eventDetail
-                    }
-                } label: {
-                    Text("保存")
-                        .font(.system(size: 16))
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
-
-            EditEventView(countdownStore: countdownStore, event: event)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func deleteEvents(at offsets: IndexSet) {
