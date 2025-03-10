@@ -33,8 +33,21 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             // 事件列表视图始终在最底层
-            eventListView
-                .zIndex(0)
+            EventListView(
+                countdownStore: countdownStore,
+                onAddEventTapped: {
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .addEvent
+                    }
+                },
+                onEventSelected: { event in
+                    selectedEvent = event
+                    withAnimation(.easeInOut(duration: 0.3)) {
+                        currentView = .eventDetail
+                    }
+                }
+            )
+            .zIndex(0)
 
             // 事件详情视图
             if let event = selectedEvent {
@@ -53,7 +66,6 @@ struct ContentView: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 currentView = .eventList
                             }
-
                         } label: {
                             SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
                                 .themeAware()
@@ -75,7 +87,6 @@ struct ContentView: View {
                             withAnimation(.easeInOut(duration: 0.3)) {
                                 currentView = .eventList
                             }
-
                         } label: {
                             Text("保存")
                                 .font(.system(size: 16))
@@ -127,98 +138,6 @@ struct ContentView: View {
         }
     }
 
-    // 事件列表视图
-    private var eventListView: some View {
-        VStack(spacing: 0) {
-            // 顶部标题和添加按钮
-            HStack {
-                Spacer()
-
-                Text("DAY✦")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                Button {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .addEvent
-                    }
-                } label: {
-                    SFSymbolIcon(symbol: .plus, size: 18, color: .accentColor).themeAware()
-                }
-                .id("addButton")
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
-
-            // 主内容区域
-            if countdownStore.events.isEmpty {
-                Spacer()
-                VStack(spacing: 20) {
-                    Image(systemName: "calendar.badge.clock")
-                        .font(.system(size: 70))
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundColor(.secondary)
-
-                    Text("没有事件")
-                        .font(.title2)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-
-                    Text("点击右上角的+按钮添加新的事件")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                }
-                .padding()
-                Spacer()
-            } else {
-                ScrollView {
-                    LazyVStack(spacing: 16) {
-                        ForEach(countdownStore.events) { event in
-                            CountdownCardView(event: event)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color(NSColor.windowBackgroundColor))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(Color(event.color).opacity(0.2), lineWidth: 1)
-                                )
-                                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                                .contentShape(RoundedRectangle(cornerRadius: 16))
-                                .onTapGesture {
-                                    selectedEvent = event
-                                    withAnimation(.easeInOut(duration: 0.3)) {
-                                        currentView = .eventDetail
-                                    }
-                                }
-                                .contextMenu {
-                                    Button(action: {
-                                        if let index = countdownStore.events.firstIndex(where: {
-                                            $0.id == event.id
-                                        }) {
-                                            countdownStore.deleteEvent(at: IndexSet([index]))
-                                        }
-                                    }) {
-                                        Label("删除", systemImage: "trash")
-                                    }
-                                }
-                        }
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-                }
-                .background(Color(NSColor.windowBackgroundColor))
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
     // 事件详情视图
     private func eventDetailView(event: CountdownEvent) -> some View {
         VStack(spacing: 0) {
@@ -229,7 +148,8 @@ struct ContentView: View {
                         currentView = .eventList
                     }
                 } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 18, color: .accentColor).themeAware()
+                    SFSymbolIcon(symbol: .chevronLeft, size: 18, color: .accentColor)
+                        .themeAware()
                 }
                 .buttonStyle(.plain)
 
@@ -283,9 +203,9 @@ struct ContentView: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
                     }
-
                 } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor).themeAware()
+                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
+                        .themeAware()
                 }
                 .buttonStyle(.plain)
 
@@ -304,7 +224,6 @@ struct ContentView: View {
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
                     }
-
                 } label: {
                     Text("保存")
                         .font(.system(size: 16))
