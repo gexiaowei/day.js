@@ -199,6 +199,17 @@ struct EventFormView: View {
                 }
             }
         }
+
+        // 先关闭当前视图
+        dismiss()
+
+        // 延迟一小段时间后发送通知
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            NotificationCenter.default.post(
+                name: NSNotification.Name("didSelectImageNotification"),
+                object: nil
+            )
+        }
     }
 
     private func cycleIcon(for cycle: RepeatCycle) -> String {

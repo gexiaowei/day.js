@@ -167,13 +167,25 @@ struct ContentView: View {
 
             // 添加通知监听，当删除事件时返回到事件列表
             NotificationCenter.default.addObserver(
-                forName: NSNotification.Name("ReturnToEventList"),
+                forName: NSNotification.Name("didDeleteEventNotification"),
                 object: nil,
                 queue: .main
             ) { _ in
                 withAnimation(.easeInOut(duration: 0.3)) {
                     currentView = .eventList
                     showingPopover = false
+                }
+            }
+
+            // 添加通知监听，当选择图片后重新显示 popover
+            NotificationCenter.default.addObserver(
+                forName: NSNotification.Name("didSelectImageNotification"),
+                object: nil,
+                queue: .main
+            ) { _ in
+                print("收到图片选择通知，重新显示popover")
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    showingPopover = true
                 }
             }
         }
