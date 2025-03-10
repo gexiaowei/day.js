@@ -51,10 +51,23 @@ struct ContentView: View {
 
             // 事件详情视图
             if let event = selectedEvent {
-                eventDetailView(event: event)
-                    .opacity(currentView == .eventDetail ? 1 : 0)
-                    .offset(x: currentView == .eventDetail ? 0 : 500)
-                    .zIndex(currentView == .eventDetail ? 1 : 0)
+                EventDetailContainerView(
+                    countdownStore: countdownStore,
+                    event: event,
+                    onBack: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentView = .eventList
+                        }
+                    },
+                    onEdit: {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            currentView = .editEvent
+                        }
+                    }
+                )
+                .opacity(currentView == .eventDetail ? 1 : 0)
+                .offset(x: currentView == .eventDetail ? 0 : 500)
+                .zIndex(currentView == .eventDetail ? 1 : 0)
             }
 
             // 添加事件视图
@@ -136,62 +149,6 @@ struct ContentView: View {
             // 移除通知监听
             NotificationCenter.default.removeObserver(self)
         }
-    }
-
-    // 事件详情视图
-    private func eventDetailView(event: CountdownEvent) -> some View {
-        VStack(spacing: 0) {
-            // 顶部标题和返回按钮
-            HStack(alignment: .center) {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.3)) {
-                        currentView = .eventList
-                    }
-                } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 18, color: .accentColor)
-                        .themeAware()
-                }
-                .buttonStyle(.plain)
-
-                Spacer()
-
-                Text(event.title)
-                    .font(.system(size: 20, weight: .bold))
-                    .font(.headline)
-                    .lineLimit(1)
-                    .foregroundColor(.primary)
-
-                Spacer()
-
-                HStack(alignment: .bottom, spacing: 8) {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            currentView = .editEvent
-                        }
-                    } label: {
-                        Text("编辑")
-                            .font(.system(size: 16))
-                    }
-                    .buttonStyle(.plain)
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            currentView = .editEvent
-                        }
-                    } label: {
-                        SFSymbolIcon(symbol: .squareAndArrowUp, size: 20, color: .accentColor)
-                            .themeAware()
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
-
-            EventDetailView(countdownStore: countdownStore, event: event)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // 编辑事件视图
