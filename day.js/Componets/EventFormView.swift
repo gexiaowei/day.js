@@ -1,5 +1,3 @@
-
-
 // Start of Selection
 import AppKit
 import SwiftUI
@@ -22,26 +20,34 @@ struct EventFormView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                // 标题
-                HStack(alignment: .top, spacing: 16) {
-                    Text("标题")
-                        .font(.subheadline)
+            VStack(alignment: .center, spacing: 20) {
+                // 图片
+                if let imageData = imageData, let nsImage = NSImage(data: imageData) {
+                    imagePreviewView(nsImage: nsImage)
+                        .onTapGesture {
+                            openImagePicker()
+                        }
+                } else {
+                    Image(systemName: "gift")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 60, height: 60)
                         .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
-                    TextField("输入事件标题", text: $title)
-                        .textFieldStyle(.roundedBorder)
-                        .frame(width: 220)
+                        .onTapGesture {
+                            openImagePicker()
+                        }
                 }
 
+                // 标题
+                TextField("输入事件标题", text: $title)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.system(size: 18))
+                    .frame(maxWidth: .infinity)
                 // 重复周期
-                HStack(alignment: .top, spacing: 16) {
+
+                HStack {
                     Text("重复周期")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
+                    Spacer()
                     Picker("", selection: $selectedRepeatCycle) {
                         ForEach(RepeatCycle.allCases, id: \.self) { cycle in
                             Label(
@@ -52,44 +58,34 @@ struct EventFormView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .frame(width: 220)
+                    .frame(width: 100)
                 }
-
                 // 日历类型
-                HStack(alignment: .top, spacing: 16) {
+                HStack {
                     Text("日历类型")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
+                    Spacer()
                     Picker("", selection: $selectedCalendarType) {
                         ForEach(CalendarType.allCases, id: \.self) { type in
                             Text(type.rawValue).tag(type)
                         }
                     }
                     .pickerStyle(.segmented)
-                    .frame(width: 220)
+                    .frame(width: 100)
                 }
 
                 // 目标日期
-                HStack(alignment: .top, spacing: 16) {
+                HStack {
                     Text("目标日期")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
+                    Spacer()
                     DatePicker("", selection: $targetDate, displayedComponents: .date)
-                        .datePickerStyle(.graphical)
-                        .frame(maxWidth: .infinity)
+                        .datePickerStyle(.field)
+                        .frame(width: 100)
                 }
 
                 // 颜色
-                HStack(alignment: .top, spacing: 16) {
+                HStack {
                     Text("颜色")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
+                    Spacer()
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 24))], spacing: 12) {
                         ForEach(colorOptions, id: \.self) { color in
                             colorCircleView(for: color)
@@ -102,28 +98,12 @@ struct EventFormView: View {
                                     }
                                 }
                         }
-                    }
-                    .frame(width: 220)
+                    }.frame(width: 200)
                 }
 
-                // 图片
-                HStack(alignment: .top, spacing: 16) {
-                    Text("图片")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-                    
-                    Group {
-                        if let imageData = imageData, let nsImage = NSImage(data: imageData) {
-                            imagePreviewView(nsImage: nsImage)
-                        } else {
-                            imagePickerButton
-                        }
-                    }
-                    .frame(width: 220)
-                }
             }
-            .padding()
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
         }
         .background(Color(NSColor.windowBackgroundColor))
     }
@@ -173,14 +153,14 @@ struct EventFormView: View {
         ZStack {
             Circle()
                 .fill(Color(color))
-                .frame(width: 24, height: 24)
+                .frame(width: 20, height: 20)
 
             if color == selectedColor {
                 Circle()
                     .stroke(Color.white, lineWidth: 2)
-                    .frame(width: 24, height: 24)
+                    .frame(width: 20, height: 20)
 
-                SFSymbolIcon(symbol: .check, size: 12, color: .white).themeAware()
+                SFSymbolIcon(symbol: .check, size: 10, color: .white).themeAware()
             }
         }
         .onTapGesture {
