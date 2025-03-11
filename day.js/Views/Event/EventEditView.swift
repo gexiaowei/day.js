@@ -2,52 +2,44 @@ import SwiftUI
 
 struct EventEditView: View {
     @ObservedObject var countdownStore: CountdownStore
-    let event: CountdownEvent
+    let eventId: UUID
     let onBack: () -> Void
     let onSave: () -> Void
 
-    // 编辑事件的状态
-    @State private var title: String
-    @State private var targetDate: Date
-    @State private var selectedCalendarType: CalendarType
-    @State private var selectedRepeatCycle: RepeatCycle
-    @State private var color: String
-    @State private var imageData: Data?
-    @State private var showingImagePicker = false
-
-    init(
-        countdownStore: CountdownStore, event: CountdownEvent, onBack: @escaping () -> Void,
-        onSave: @escaping () -> Void
-    ) {
-        self.countdownStore = countdownStore
-        self.event = event
-        self.onBack = onBack
-        self.onSave = onSave
-
-        // 初始化状态
-        _title = State(initialValue: event.title)
-        _targetDate = State(initialValue: event.targetDate)
-        _selectedCalendarType = State(initialValue: event.calendarType)
-        _selectedRepeatCycle = State(initialValue: event.repeatCycle)
-        _color = State(initialValue: event.color)
-        _imageData = State(initialValue: event.imageData)
+    // 从事件ID获取事件数据
+    private var event: CountdownEvent {
+        countdownStore.events.first { $0.id == eventId }
+            ?? CountdownEvent(
+                title: "未找到事件",
+                targetDate: Date(),
+                calendarType: .gregorian,
+                repeatCycle: .none,
+                color: "blue"
+            )
     }
+
+    // 编辑状态
+    @State private var title: String = ""
+    @State private var targetDate: Date = Date()
+    @State private var selectedCalendarType: CalendarType = .gregorian
+    @State private var selectedRepeatCycle: RepeatCycle = .none
+    @State private var selectedColor: String = "blue"
+    @State private var imageData: Data? = nil
 
     var body: some View {
         VStack(spacing: 0) {
-            // 顶部标题和返回按钮
+            // 顶部导航栏
             HStack {
-                Button {
-                    onBack()
-                } label: {
-                    SFSymbolIcon(symbol: .chevronLeft, size: 16, color: .accentColor)
-                        .themeAware()
+                Button(action: onBack) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.primary)
                 }
                 .buttonStyle(.plain)
 
                 Spacer()
 
-                Text(event.title)
+                 Text(event.title)
                     .font(.system(size: 20, weight: .bold))
                     .font(.headline)
                     .lineLimit(1)
@@ -55,64 +47,64 @@ struct EventEditView: View {
 
                 Spacer()
 
-                Button {
-                    saveEvent()
-                    onSave()
-                } label: {
+                Button(action: saveEvent) {
                     Text("保存")
-                        .font(.system(size: 16))
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundColor(.accentColor)
                 }
                 .buttonStyle(.plain)
             }
-            .padding(.horizontal)
-            .padding(.top, 16)
-            .padding(.bottom, 16)
+            .padding()
             .background(Color(NSColor.windowBackgroundColor))
 
+            // 表单
             EventFormView(
                 countdownStore: countdownStore,
                 title: $title,
                 targetDate: $targetDate,
                 selectedCalendarType: $selectedCalendarType,
                 selectedRepeatCycle: $selectedRepeatCycle,
-                selectedColor: $color,
+                selectedColor: $selectedColor,
                 imageData: $imageData
             )
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .fileImporter(
-            isPresented: $showingImagePicker,
-            allowedContentTypes: [.image],
-            allowsMultipleSelection: false
-        ) { result in
-            switch result {
-            case .success(let files):
-                guard let file = files.first else { return }
-                do {
-                    let data = try Data(contentsOf: file)
-                    imageData = data
-                } catch {
-                    print("Error loading image: \(error)")
-                }
-            case .failure(let error):
-                print("Error selecting image: \(error)")
-            }
+        .onAppear {
+            // 初始化表单数据
+            title = event.title
+            targetDate = event.targetDate
+            selectedCalendarType = event.calendarType
+            selectedRepeatCycle = event.repeatCycle
+            selectedColor = event.color
+            imageData = event.imageData
         }
     }
 
     private func saveEvent() {
         // 创建更新后的事件
         let updatedEvent = CountdownEvent(
-            id: event.id,
+            id: eventId,
             title: title,
             targetDate: targetDate,
             calendarType: selectedCalendarType,
             repeatCycle: selectedRepeatCycle,
-            color: color,
+            color: selectedColor,
             imageData: imageData
         )
 
         // 更新事件
         countdownStore.updateEvent(updatedEvent)
+
+        // 调用保存回调
+        onSave()
     }
+}
+
+#Preview {
+    EventEditView(
+        countdownStore: CountdownStore(),
+        eventId: UUID(),
+        onBack: {},
+        onSave: {}
+    )
+    .frame(width: 400, height: 600)
 }

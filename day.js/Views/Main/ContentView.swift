@@ -12,7 +12,7 @@ struct ContentView: View {
     @StateObject private var countdownStore = CountdownStore()
     @State private var showingAddEvent = false
     @State private var showingEventDetail = false
-    @State private var selectedEvent: CountdownEvent? = nil
+    @State private var selectedEventId: UUID? = nil
 
     @State var popoverType: PopoverType = .add
     @State var currentView: ViewType = .eventList
@@ -41,7 +41,7 @@ struct ContentView: View {
                     }
                 },
                 onEventSelected: { event in
-                    selectedEvent = event
+                    selectedEventId = event.id
                     withAnimation(.easeInOut(duration: 0.3)) {
                         currentView = .eventDetail
                     }
@@ -50,10 +50,10 @@ struct ContentView: View {
             .zIndex(0)
 
             // 事件详情视图
-            if let event = selectedEvent {
+            if let eventId = selectedEventId {
                 EventDetailView(
                     countdownStore: countdownStore,
-                    event: event,
+                    eventId: eventId,
                     onBack: {
                         withAnimation(.easeInOut(duration: 0.3)) {
                             currentView = .eventList
@@ -90,10 +90,10 @@ struct ContentView: View {
             .zIndex(currentView == .addEvent ? 2 : 0)
 
             // 编辑事件视图
-            if let event = selectedEvent {
+            if let eventId = selectedEventId {
                 EventEditView(
                     countdownStore: countdownStore,
-                    event: event,
+                    eventId: eventId,
                     onBack: {
                         withAnimation(.easeInOut(duration: 0.3)) {
                             currentView = .eventDetail

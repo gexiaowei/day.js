@@ -2,9 +2,21 @@ import SwiftUI
 
 struct EventDetailView: View {
     @ObservedObject var countdownStore: CountdownStore
-    let event: CountdownEvent
+    let eventId: UUID  // 存储事件ID而不是事件本身
     let onBack: () -> Void
     let onEdit: () -> Void
+
+    // 计算属性来获取最新的事件数据
+    private var event: CountdownEvent {
+        countdownStore.events.first { $0.id == eventId }
+            ?? CountdownEvent(
+                title: "未找到事件",
+                targetDate: Date(),
+                calendarType: .gregorian,
+                repeatCycle: .none,
+                color: "blue"
+            )
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -151,4 +163,14 @@ struct EventDetailView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+}
+
+#Preview {
+    EventDetailView(
+        countdownStore: CountdownStore(),
+        eventId: UUID(),
+        onBack: {},
+        onEdit: {}
+    )
+    .frame(width: 400, height: 600)
 }
