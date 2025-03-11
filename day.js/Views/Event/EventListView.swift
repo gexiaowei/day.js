@@ -57,35 +57,13 @@ struct EventListView: View {
                 ScrollView {
                     LazyVStack(spacing: 16) {
                         ForEach(countdownStore.events) { event in
-                            CountdownCardView(event: event)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color(NSColor.windowBackgroundColor))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .stroke(Color(event.color).opacity(0.2), lineWidth: 1)
-                                )
-                                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
-                                .contentShape(RoundedRectangle(cornerRadius: 16))
+                            CountdownCardView(event: event, countdownStore: countdownStore)
                                 .onTapGesture {
                                     onEventSelected(event)
                                 }
-                                .contextMenu {
-                                    Button(action: {
-                                        if let index = countdownStore.events.firstIndex(where: {
-                                            $0.id == event.id
-                                        }) {
-                                            countdownStore.deleteEvent(at: IndexSet([index]))
-                                        }
-                                    }) {
-                                        Label("删除", systemImage: "trash")
-                                    }
-                                }
                         }
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
+                    .padding()
                 }
                 .background(Color(NSColor.windowBackgroundColor))
             }

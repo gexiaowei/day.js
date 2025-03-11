@@ -5,6 +5,7 @@ import SwiftUI
 
 struct CountdownCardView: View {
     let event: CountdownEvent
+    @ObservedObject var countdownStore: CountdownStore
     @State private var isHovering = false
 
     var body: some View {
@@ -98,5 +99,30 @@ struct CountdownCardView: View {
                 isHovering = hovering
             }
         }
+        .contextMenu {
+            Button(
+                role: .destructive,
+                action: {
+                    countdownStore.deleteEvent(event)
+                }
+            ) {
+                Label("删除", systemImage: "trash")
+            }
+        }
     }
+}
+
+#Preview {
+    CountdownCardView(
+        event: CountdownEvent(
+            title: "测试事件",
+            targetDate: Date().addingTimeInterval(86400),
+            calendarType: .gregorian,
+            repeatCycle: .none,
+            color: "blue"
+        ),
+        countdownStore: CountdownStore()
+    )
+    .frame(width: 400)
+    .padding()
 }

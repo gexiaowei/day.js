@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 class CountdownStore: ObservableObject {
-    public var events: [CountdownEvent] = []
+    @Published public var events: [CountdownEvent] = []
 
     private static func fileURL() throws -> URL {
         try FileManager.default.url(
@@ -47,6 +47,11 @@ class CountdownStore: ObservableObject {
 
     public func deleteEvent(at offsets: IndexSet) {
         events.remove(atOffsets: offsets)
+        save()
+    }
+
+    public func deleteEvent(_ event: CountdownEvent) {
+        events.removeAll { $0.id == event.id }
         save()
     }
 
