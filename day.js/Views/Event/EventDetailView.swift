@@ -14,7 +14,7 @@ struct EventDetailView: View {
                 targetDate: Date(),
                 calendarType: .gregorian,
                 repeatCycle: .none,
-                color: "blue"
+                color: "SORA"
             )
     }
 
@@ -60,7 +60,7 @@ struct EventDetailView: View {
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
+            
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .center, spacing: 16) {
@@ -159,7 +159,6 @@ struct EventDetailView: View {
                 .padding()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(NSColor.windowBackgroundColor))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

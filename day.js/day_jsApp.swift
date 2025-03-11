@@ -33,8 +33,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
 
         if let button = statusItem?.button {
-            let isDarkMode = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-            button.image = NSImage(named: isDarkMode ? "MenubarIconDark" : "MenubarIconLight")
+            button.image = NSImage(named: "MenubarIconDark")
             button.image?.size = NSSize(width: 18, height: 18)
             button.action = #selector(statusBarButtonClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])

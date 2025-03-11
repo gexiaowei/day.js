@@ -49,7 +49,6 @@ struct EventAddView: View {
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
 
             // 添加表单
             EventFormView(

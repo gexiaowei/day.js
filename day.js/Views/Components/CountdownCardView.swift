@@ -119,7 +119,7 @@ struct CountdownCardView: View {
             targetDate: Date().addingTimeInterval(86400),
             calendarType: .gregorian,
             repeatCycle: .none,
-            color: "blue"
+            color: "SORA"
         ),
         countdownStore: CountdownStore()
     )

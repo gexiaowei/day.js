@@ -30,16 +30,15 @@ struct EventListView: View {
             .padding(.horizontal)
             .padding(.top, 16)
             .padding(.bottom, 16)
-            .background(Color(NSColor.windowBackgroundColor))
 
             // 主内容区域
             if countdownStore.events.isEmpty {
                 Spacer()
                 VStack(spacing: 20) {
-                    Image(systemName: "calendar.badge.clock")
-                        .font(.system(size: 70))
-                        .symbolRenderingMode(.hierarchical)
-                        .foregroundColor(.secondary)
+                    Image("MenubarIconLight")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 40, height: 40)
 
                     Text("没有事件")
                         .font(.title2)
@@ -65,7 +64,6 @@ struct EventListView: View {
                     }
                     .padding()
                 }
-                .background(Color(NSColor.windowBackgroundColor))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

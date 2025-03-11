@@ -14,7 +14,7 @@ struct EventEditView: View {
                 targetDate: Date(),
                 calendarType: .gregorian,
                 repeatCycle: .none,
-                color: "blue"
+                color: "SORA"
             )
     }
 
@@ -23,7 +23,7 @@ struct EventEditView: View {
     @State private var targetDate: Date = Date()
     @State private var selectedCalendarType: CalendarType = .gregorian
     @State private var selectedRepeatCycle: RepeatCycle = .none
-    @State private var selectedColor: String = "blue"
+    @State private var selectedColor: String = "SORA"
     @State private var imageData: Data? = nil
 
     var body: some View {
@@ -39,7 +39,7 @@ struct EventEditView: View {
 
                 Spacer()
 
-                 Text(event.title)
+                Text(event.title)
                     .font(.system(size: 20, weight: .bold))
                     .font(.headline)
                     .lineLimit(1)
@@ -55,7 +55,6 @@ struct EventEditView: View {
                 .buttonStyle(.plain)
             }
             .padding()
-            .background(Color(NSColor.windowBackgroundColor))
 
             // 表单
             EventFormView(

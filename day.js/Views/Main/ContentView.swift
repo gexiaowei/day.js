@@ -48,6 +48,7 @@ struct ContentView: View {
                 }
             )
             .zIndex(0)
+            .opacity(currentView == .eventList ? 1 : 0)
 
             // 事件详情视图
             if let eventId = selectedEventId {
