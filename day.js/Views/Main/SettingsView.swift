@@ -22,7 +22,7 @@ struct SettingsView: View {
     var body: some View {
         VStack(spacing: 0) {
             // 内容区域 - 预加载所有视图并使用透明度动画
-            ZStack {
+            ZStack(alignment: .top) {
                 // 通用设置
                 GeneralSettingsView(
                     launchAtLogin: $launchAtLogin,
@@ -44,7 +44,7 @@ struct SettingsView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(width: 500, height: 500)
+        .frame(width: 450, height: 300)
         .themeAware()  // 应用主题感知修饰器
         .onChange(of: appTheme) { oldValue, newValue in
             // 当主题设置变化时，应用新主题

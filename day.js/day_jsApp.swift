@@ -15,6 +15,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
     var settingsViewController: NSHostingController<AnyView>?
     var settingsState = SettingsState()
     let themeManager = ThemeManager.shared
+    let iconConfig = NSImage.SymbolConfiguration(pointSize: 20, weight: .regular)
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 隐藏Dock栏图标
@@ -161,16 +162,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         // 更新工具栏项的选中状态
         if let toolbar = settingsWindow?.toolbar {
             for item in toolbar.items {
+
                 if item.itemIdentifier.rawValue == "General" {
                     item.image = NSImage(
-                        systemSymbolName: "gear.fill", accessibilityDescription: "通用")
+                        systemSymbolName: "gear",
+                        accessibilityDescription: "通用")?
+                        .withSymbolConfiguration(iconConfig)
                 } else if item.itemIdentifier.rawValue == "Sync" {
                     item.image = NSImage(
                         systemSymbolName: "arrow.triangle.2.circlepath.circle",
-                        accessibilityDescription: "同步")
+                        accessibilityDescription: "同步")?
+                        .withSymbolConfiguration(iconConfig)
                 } else if item.itemIdentifier.rawValue == "About" {
                     item.image = NSImage(
-                        systemSymbolName: "info.circle", accessibilityDescription: "关于")
+                        systemSymbolName: "info.circle",
+                        accessibilityDescription: "关于")?
+                        .withSymbolConfiguration(iconConfig)
                 }
             }
         }
@@ -183,15 +190,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         // 更新工具栏项的选中状态
         if let toolbar = settingsWindow?.toolbar {
             for item in toolbar.items {
+
                 if item.itemIdentifier.rawValue == "Sync" {
                     item.image = NSImage(
                         systemSymbolName: "arrow.triangle.2.circlepath.circle.fill",
-                        accessibilityDescription: "同步")
+                        accessibilityDescription: "同步")?
+                        .withSymbolConfiguration(iconConfig)
                 } else if item.itemIdentifier.rawValue == "General" {
-                    item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: "通用")
+                    item.image = NSImage(
+                        systemSymbolName: "gear",
+                        accessibilityDescription: "通用")?
+                        .withSymbolConfiguration(iconConfig)
                 } else if item.itemIdentifier.rawValue == "About" {
                     item.image = NSImage(
-                        systemSymbolName: "info.circle", accessibilityDescription: "关于")
+                        systemSymbolName: "info.circle",
+                        accessibilityDescription: "关于")?
+                        .withSymbolConfiguration(iconConfig)
                 }
             }
         }
@@ -206,13 +220,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
             for item in toolbar.items {
                 if item.itemIdentifier.rawValue == "About" {
                     item.image = NSImage(
-                        systemSymbolName: "info.circle.fill", accessibilityDescription: "关于")
+                        systemSymbolName: "info.circle.fill",
+                        accessibilityDescription: "关于")?
+                        .withSymbolConfiguration(iconConfig)
                 } else if item.itemIdentifier.rawValue == "General" {
-                    item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: "通用")
+                    item.image = NSImage(
+                        systemSymbolName: "gear",
+                        accessibilityDescription: "通用")?
+                        .withSymbolConfiguration(iconConfig)
                 } else if item.itemIdentifier.rawValue == "Sync" {
                     item.image = NSImage(
                         systemSymbolName: "arrow.triangle.2.circlepath.circle",
-                        accessibilityDescription: "同步")
+                        accessibilityDescription: "同步")?
+                        .withSymbolConfiguration(iconConfig)
                 }
             }
         }
@@ -223,20 +243,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
         _ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier,
         willBeInsertedIntoToolbar flag: Bool
     ) -> NSToolbarItem? {
+        let symbolConfig = NSImage.SymbolConfiguration(pointSize: 18, weight: .regular)
+
         if itemIdentifier == NSToolbarItem.Identifier("General") {
-            // 使用NSToolbarItemGroup来创建带有图标和标签的工具栏项
             let item = NSToolbarItem(itemIdentifier: itemIdentifier)
             item.label = "通用"
             item.paletteLabel = "通用"
             item.toolTip = "通用设置"
-            item.image = NSImage(systemSymbolName: "gear", accessibilityDescription: "通用")
+            item.image = NSImage(
+                systemSymbolName: "gear",
+                accessibilityDescription: "通用")?
+                .withSymbolConfiguration(symbolConfig)
             item.action = #selector(selectGeneralTab(_:))
             item.target = self
-
-            // 确保图标和标签同时显示
             item.isBordered = true
-
             return item
+
         } else if itemIdentifier == NSToolbarItem.Identifier("Sync") {
             let item = NSToolbarItem(itemIdentifier: itemIdentifier)
             item.label = "同步"
@@ -244,27 +266,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSToolbarDelegate {
             item.toolTip = "同步设置"
             item.image = NSImage(
                 systemSymbolName: "arrow.triangle.2.circlepath.circle",
-                accessibilityDescription: "同步")
+                accessibilityDescription: "同步")?
+                .withSymbolConfiguration(symbolConfig)
             item.action = #selector(selectSyncTab(_:))
             item.target = self
-
-            // 确保图标和标签同时显示
             item.isBordered = true
-
             return item
+
         } else if itemIdentifier == NSToolbarItem.Identifier("About") {
             let item = NSToolbarItem(itemIdentifier: itemIdentifier)
             item.label = "关于"
             item.paletteLabel = "关于"
             item.toolTip = "关于应用"
-            item.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: "关于")
+            item.image = NSImage(
+                systemSymbolName: "info.circle",
+                accessibilityDescription: "关于")?
+                .withSymbolConfiguration(symbolConfig)
             item.action = #selector(selectAboutTab(_:))
             item.target = self
-
-            // 确保图标和标签同时显示
             item.isBordered = true
-
             return item
+
         } else if itemIdentifier == NSToolbarItem.Identifier.flexibleSpace {
             return NSToolbarItem(itemIdentifier: NSToolbarItem.Identifier.flexibleSpace)
         }
