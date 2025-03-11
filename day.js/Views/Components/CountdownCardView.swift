@@ -19,16 +19,24 @@ struct CountdownCardView: View {
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 48, height: 48)
-                        .background(Color(event.color))
                         .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color(event.color), lineWidth: 2)
+                        )
+                        .themeAware()
 
                 } else {
                     Image(systemName: "gift.circle.fill")
-                        .font(.system(size: 24))
+                        .font(.system(size: 46))
                         .foregroundColor(.white)
                         .frame(width: 48, height: 48)
-                        .background(Color(event.color))
                         .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color(event.color), lineWidth: 2)
+                        )
+                        .themeAware()
                 }
             }
 
@@ -85,7 +93,7 @@ struct CountdownCardView: View {
         .padding(.vertical, 8)
         .background(
             RoundedRectangle(cornerRadius: 4)
-                .fill(Color(NSColor.windowBackgroundColor).opacity(isHovering ? 0.8 : 1.0))
+                .fill(Color(NSColor.windowBackgroundColor).opacity(isHovering ? 0.4 : 0.2))
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(
